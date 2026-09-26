@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.skills-wrapper {
+    display: flex;
+    gap: 70px;
+    padding-top: 120px;
+}
+
+.skills {
+    width: 160px;
+    height: 200px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.outer {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    padding: 20px;
+    box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+                -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+}
+
+.inner {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 4px 4px 6px -1px rgba(0, 0, 0, 0.2),
+                inset -4px -4px 6px -1px rgba(255, 255, 255, 0.7),
+                -0.5px -0.5px 0px rgba(255, 255, 255, 1),
+                0.5px 0.5px 0px rgba(0, 0, 0, 0.15),
+                0px 12px 10px -10px rgba(0, 0, 0, 0.5);
+}
+
+.number {
+    font-size: 22px;
+    font-weight: bold;
+    color: #101068;
+}
+
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 20px;
+    stroke-linecap: round;
+}
+
+.label {
+    margin-top: 10px;
+    font-size: 17px;
+    font-weight: 650;
+    color: #333;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers the title and circles */
+}
+
+.container h1 {
+    font-size: 60px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #060626;
+
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 4px solid #060626;
+
+    width: 0;
+
+    /* animation: typing + pause + erase + loop */
+    animation: typingLoop 12s steps(30, end) infinite, blink-caret 0.75s step-end infinite;
+}
+
+/* Typing + pause + erase */
+@keyframes typingLoop {
+    0%, 15% { width: 0 }          /* start typing */
+    50%, 65% { width: 100% }      /* stay visible for 6 seconds */
+    100% { width: 0 }             /* erase */
+}
+
+/* Blinking cursor */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #060626 }
+}
+
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

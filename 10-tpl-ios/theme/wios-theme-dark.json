@@ -1,0 +1,18 @@
+{
+  "theme": "dark",
+  "colors": {
+    "--gc-primary": "#ff2d78",
+    "--gc-secondary": "#e8195a",
+    "--gc-success": "#30d158",
+    "--gc-danger": "#ff002b",
+    "--gc-warning": "#ffd60a",
+    "--gc-info": "#ff6b9d",
+    "--gc-bg-main": "#0a0a0a",
+    "--gc-bg-section": "#0f0f0f",
+    "--gc-bg-card": "#181818",
+    "--gc-text-heading": "#ffffff",
+    "--gc-text-body": "#f0e8ec",
+    "--gc-text-muted": "#9e8a91",
+    "--gc-text-inverse": "#000000"
+  }
+}

@@ -1,0 +1,918 @@
+/* ============================================================
+   WIOS — iOS-Style UI Framework  |  core.css  v1.0
+   A utility-first component library with Apple-inspired design
+   ============================================================ */
+
+/* ─── CSS Custom Properties ─────────────────────────────── */
+:root {
+  /* Typography scale */
+  --wios-h1-fs: 3.5rem;   --wios-h1-w: 700;  --wios-h1-lh: 1.08; --wios-h1-ls: -0.03em;
+  --wios-h2-fs: 2.75rem;  --wios-h2-w: 700;  --wios-h2-lh: 1.1;  --wios-h2-ls: -0.025em;
+  --wios-h3-fs: 2rem;     --wios-h3-w: 600;  --wios-h3-lh: 1.15; --wios-h3-ls: -0.02em;
+  --wios-h4-fs: 1.5rem;   --wios-h4-w: 600;  --wios-h4-lh: 1.2;  --wios-h4-ls: -0.015em;
+  --wios-h5-fs: 1.25rem;  --wios-h5-w: 600;  --wios-h5-lh: 1.3;  --wios-h5-ls: -0.01em;
+  --wios-h6-fs: 1.0625rem;--wios-h6-w: 600;  --wios-h6-lh: 1.4;  --wios-h6-ls: -0.005em;
+
+  --wios-body1-fs: 1rem;    --wios-body1-w: 400; --wios-body1-lh: 1.5;
+  --wios-body2-fs: 0.875rem;--wios-body2-w: 400; --wios-body2-lh: 1.5;
+
+  --wios-cap1-fs: 0.75rem; --wios-cap1-w: 600; --wios-cap1-lh: 1.3; --wios-cap1-ls: 0.02em;
+  --wios-cap2-fs: 0.75rem; --wios-cap2-w: 400; --wios-cap2-lh: 1.3; --wios-cap2-ls: 0.03em;
+
+  --wios-btn1-fs: 1rem;    --wios-btn1-w: 600;
+  --wios-btn2-fs: 0.875rem;--wios-btn2-w: 600;
+
+  --wios-link-fs:    1rem;   --wios-link-w:    600;
+  --wios-sm-link-fs: 0.75rem;--wios-sm-link-w: 600;
+
+  /* Spacing */
+  --wios-sp1:  0.25rem;  /* 4px  */
+  --wios-sp2:  0.5rem;   /* 8px  */
+  --wios-sp3:  0.75rem;  /* 12px */
+  --wios-sp4:  1rem;     /* 16px */
+  --wios-sp5:  1.25rem;  /* 20px */
+  --wios-sp6:  1.5rem;   /* 24px */
+  --wios-sp7:  2rem;     /* 32px */
+  --wios-sp8:  2.5rem;   /* 40px */
+  --wios-sp9:  3rem;     /* 48px */
+  --wios-sp10: 4rem;     /* 64px */
+
+  /* Border radius */
+  --wios-r1:    0.25rem;  /* 4px  */
+  --wios-r2:    0.5rem;   /* 8px  */
+  --wios-r3:    0.75rem;  /* 12px */
+  --wios-r4:    1rem;     /* 16px */
+  --wios-r5:    1.25rem;  /* 20px */
+  --wios-r6:    1.5rem;   /* 24px */
+  --wios-rpill: 999px;
+
+  /* Transitions */
+  --wios-fast: 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  --wios-ios:  0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --wios-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index scale */
+  --wios-z-base:     0;
+  --wios-z-raised:   10;
+  --wios-z-dropdown: 20;
+  --wios-z-sticky:   30;
+  --wios-z-drawer:   40;
+  --wios-z-modal:    50;
+  --wios-z-max:      9999;
+
+  /* Container widths */
+  --wios-container-xs:  480px;
+  --wios-container-sm:  640px;
+  --wios-container-md:  768px;
+  --wios-container-lg:  1024px;
+  --wios-container-xl:  1280px;
+  --wios-container-2xl: 1536px;
+}
+
+/* ─── Light Theme (default) ─────────────────────────────── */
+:root,
+[data-wios-theme="light"] {
+  --wios-bg:        #f5f5f7;
+  --wios-surface:   #ffffff;
+  --wios-surface-2: #f0f0f5;
+  --wios-surface-3: #e5e5ea;
+
+  --wios-text:   #1d1d1f;
+  --wios-text-2: #3c3c43;
+  --wios-text-3: #6e6e73;
+  --wios-text-4: #8e8e93;
+
+  --wios-primary:   #007aff;
+  --wios-primary-d: #005fcc;
+  --wios-success:   #34c759;
+  --wios-warning:   #ff9500;
+  --wios-error:     #ff3b30;
+  --wios-info:      #2997ff;
+
+  --wios-border:  rgba(0, 0, 0, 0.08);
+  --wios-divider: rgba(60, 60, 67, 0.12);
+
+  --wios-shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --wios-shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --wios-shadow-lg: 0 10px 30px rgba(0,0,0,.12);
+
+  /* ── Global Color System (single source of truth) ──────── */
+  /* Brand Colors */
+  --gc-primary:   #007aff;
+  --gc-secondary: #5856d6;
+  --gc-success:   #34c759;
+  --gc-danger:    #ff3b30;
+  --gc-warning:   #ff9500;
+  --gc-info:      #2997ff;
+  /* Background Colors */
+  --gc-bg-main:    #f5f5f7;
+  --gc-bg-section: #f0f0f5;
+  --gc-bg-card:    #ffffff;
+  /* Typography Colors */
+  --gc-text-heading: #1d1d1f;
+  --gc-text-body:    #3c3c43;
+  --gc-text-muted:   #6e6e73;
+  --gc-text-inverse: #ffffff;
+}
+
+/* ─── Dark Theme ─────────────────────────────────────────── */
+[data-wios-theme="dark"] {
+  --wios-bg:        #000000;
+  --wios-surface:   #1c1c1e;
+  --wios-surface-2: #2c2c2e;
+  --wios-surface-3: #3a3a3c;
+
+  --wios-text:   #ffffff;
+  --wios-text-2: #e5e5ea;
+  --wios-text-3: #aeaeb2;
+  --wios-text-4: #8e8e93;
+
+  --wios-primary:   #c9174c;
+  --wios-primary-d: #ad0437;
+  --wios-success:   #cae91e;
+  --wios-warning:   #12d612;
+  --wios-error:     #ff0000;
+  --wios-info:      #b32a53;
+
+  --wios-border:  rgba(255, 255, 255, 0.08);
+  --wios-divider: rgba(255, 255, 255, 0.12);
+
+  --wios-shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --wios-shadow-md: 0 4px 12px rgba(0,0,0,.6);
+  --wios-shadow-lg: 0 10px 30px rgba(0,0,0,.7);
+
+  /* ── Global Color System — dark defaults ────────────────── */
+  --gc-primary:      #0a84ff;
+  --gc-secondary:    #5e5ce6;
+  --gc-success:      #30d158;
+  --gc-danger:       #ff453a;
+  --gc-warning:      #ffd60a;
+  --gc-info:         #64d2ff;
+  --gc-bg-main:      #000000;
+  --gc-bg-section:   #1c1c1e;
+  --gc-bg-card:      #2c2c2e;
+  --gc-text-heading: #ffffff;
+  --gc-text-body:    #e5e5ea;
+  --gc-text-muted:   #aeaeb2;
+  --gc-text-inverse: #000000;
+}
+
+/* ─── Reset & Base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  background: var(--wios-bg);
+  color: var(--wios-text);
+  font-size: var(--wios-body1-fs);
+  font-weight: var(--wios-body1-w);
+  line-height: var(--wios-body1-lh);
+  transition: background var(--wios-ios), color var(--wios-ios);
+}
+::-webkit-scrollbar { display: none; }
+
+/* ──────────────────────────────────────────────────────────────
+   Color 
+        Background and text Color
+   ────────────────────────────────────────────────────────────── */
+
+    .bg-color-primary   { background: var(--wios-primary); }
+    .bg-color-success   { background: var(--wios-success); }
+    .bg-color-warning   { background: var(--wios-warning); }
+    .bg-color-error     { background: var(--wios-error); }
+    .bg-color-info      { background: var(--wios-info); }
+    
+    .text-color-primary   { color: var(--wios-primary); }
+    .text-color-success   { color: var(--wios-success); }
+    .text-color-warning   { color: var(--wios-warning); }
+    .text-color-error     { color: var(--wios-error); }
+    .text-color-info      { color: var(--wios-info); }
+
+/* ─── Typography ─────────────────────────────────────────── */
+.wios-h1 { font-size: clamp(2rem, 5vw, var(--wios-h1-fs)); font-weight: var(--wios-h1-w); line-height: var(--wios-h1-lh); letter-spacing: var(--wios-h1-ls); }
+.wios-h2 { font-size: clamp(1.6rem, 4vw, var(--wios-h2-fs)); font-weight: var(--wios-h2-w); line-height: var(--wios-h2-lh); letter-spacing: var(--wios-h2-ls); }
+.wios-h3 { font-size: clamp(1.3rem, 3vw, var(--wios-h3-fs)); font-weight: var(--wios-h3-w); line-height: var(--wios-h3-lh); letter-spacing: var(--wios-h3-ls); }
+.wios-h4 { font-size: var(--wios-h4-fs); font-weight: var(--wios-h4-w); line-height: var(--wios-h4-lh); letter-spacing: var(--wios-h4-ls); }
+.wios-h5 { font-size: var(--wios-h5-fs); font-weight: var(--wios-h5-w); line-height: var(--wios-h5-lh); letter-spacing: var(--wios-h5-ls); }
+.wios-h6 { font-size: var(--wios-h6-fs); font-weight: var(--wios-h6-w); line-height: var(--wios-h6-lh); letter-spacing: var(--wios-h6-ls); }
+
+.wios-body1 { font-size: var(--wios-body1-fs); font-weight: var(--wios-body1-w); line-height: var(--wios-body1-lh); }
+.wios-body2 { font-size: var(--wios-body2-fs); font-weight: var(--wios-body2-w); line-height: var(--wios-body2-lh); }
+
+.wios-cap1 { font-size: var(--wios-cap1-fs); font-weight: var(--wios-cap1-w); line-height: var(--wios-cap1-lh); letter-spacing: var(--wios-cap1-ls); }
+.wios-cap2 { font-size: var(--wios-cap2-fs); font-weight: var(--wios-cap2-w); line-height: var(--wios-cap2-lh); letter-spacing: var(--wios-cap2-ls); }
+
+.wios-eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--wios-primary);
+}
+
+/* ─── Links ──────────────────────────────────────────────── */
+a.wios-link {
+  font-size: var(--wios-link-fs); font-weight: var(--wios-link-w);
+  color: var(--wios-primary); text-decoration: none;
+  transition: opacity var(--wios-fast);
+}
+a.wios-link:hover { opacity: 0.7; text-decoration: underline; }
+
+a.wios-link-sm {
+  font-size: var(--wios-sm-link-fs); font-weight: var(--wios-sm-link-w);
+  color: var(--wios-primary); text-decoration: none;
+  transition: opacity var(--wios-fast);
+}
+a.wios-link-sm:hover { opacity: 0.7; text-decoration: underline; }
+
+/* ─── Containers ─────────────────────────────────────────── */
+.wios-container    { width: 100%; max-width: var(--wios-container-lg);  margin-inline: auto; padding-inline: var(--wios-sp8); }
+.wios-container-xs { width: 100%; max-width: var(--wios-container-xs);  margin-inline: auto; padding-inline: var(--wios-sp4); }
+.wios-container-sm { width: 100%; max-width: var(--wios-container-sm);  margin-inline: auto; padding-inline: var(--wios-sp6); }
+.wios-container-md { width: 100%; max-width: var(--wios-container-md);  margin-inline: auto; padding-inline: var(--wios-sp6); }
+.wios-container-lg { width: 100%; max-width: var(--wios-container-lg);  margin-inline: auto; padding-inline: var(--wios-sp8); }
+.wios-container-xl { width: 100%; max-width: var(--wios-container-xl);  margin-inline: auto; padding-inline: var(--wios-sp8); }
+.wios-container-2xl{ width: 100%; max-width: var(--wios-container-2xl); margin-inline: auto; padding-inline: var(--wios-sp10);}
+
+/* ─── Grid System ────────────────────────────────────────── */
+.wios-grid { display: grid; gap: var(--wios-sp4); }
+.wios-grid-1  { grid-template-columns: 1fr; }
+.wios-grid-2  { grid-template-columns: repeat(2, 1fr); }
+.wios-grid-3  { grid-template-columns: repeat(3, 1fr); }
+.wios-grid-4  { grid-template-columns: repeat(4, 1fr); }
+.wios-grid-5  { grid-template-columns: repeat(5, 1fr); }
+.wios-grid-6  { grid-template-columns: repeat(6, 1fr); }
+.wios-grid-auto { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.wios-col-span-1 { grid-column: span 1; }
+.wios-col-span-2 { grid-column: span 2; }
+.wios-col-span-3 { grid-column: span 3; }
+.wios-col-span-4 { grid-column: span 4; }
+.wios-col-span-5 { grid-column: span 5; }
+.wios-col-full   { grid-column: 1 / -1; }
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) { .wios-grid-5, .wios-grid-6 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .wios-grid-3, .wios-grid-4, .wios-grid-5, .wios-grid-6 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .wios-grid-2, .wios-grid-3, .wios-grid-4, .wios-grid-5, .wios-grid-6 { grid-template-columns: 1fr; } }
+
+/* ─── Flex Utilities ─────────────────────────────────────── */
+.wios-flex       { display: flex; }
+.wios-flex-col   { display: flex; flex-direction: column; }
+.wios-flex-wrap  { flex-wrap: wrap; }
+.wios-items-start   { align-items: flex-start; }
+.wios-items-center  { align-items: center; }
+.wios-items-end     { align-items: flex-end; }
+.wios-items-stretch { align-items: stretch; }
+.wios-justify-start   { justify-content: flex-start; }
+.wios-justify-center  { justify-content: center; }
+.wios-justify-end     { justify-content: flex-end; }
+.wios-justify-between { justify-content: space-between; }
+.wios-gap-1  { gap: var(--wios-sp1); }
+.wios-gap-2  { gap: var(--wios-sp2); }
+.wios-gap-3  { gap: var(--wios-sp3); }
+.wios-gap-4  { gap: var(--wios-sp4); }
+.wios-gap-5  { gap: var(--wios-sp5); }
+.wios-gap-6  { gap: var(--wios-sp6); }
+.wios-gap-8  { gap: var(--wios-sp8); }
+
+/* ─── Spacing Utilities ──────────────────────────────────── */
+.wios-p-1  { padding: var(--wios-sp1); }  .wios-p-2  { padding: var(--wios-sp2); }
+.wios-p-3  { padding: var(--wios-sp3); }  .wios-p-4  { padding: var(--wios-sp4); }
+.wios-p-5  { padding: var(--wios-sp5); }  .wios-p-6  { padding: var(--wios-sp6); }
+.wios-p-7  { padding: var(--wios-sp7); }  .wios-p-8  { padding: var(--wios-sp8); }
+.wios-px-4 { padding-inline: var(--wios-sp4); } .wios-px-6 { padding-inline: var(--wios-sp6); }
+.wios-py-3 { padding-block:  var(--wios-sp3); } .wios-py-5 { padding-block:  var(--wios-sp5); }
+
+.wios-m-0  { margin: 0; }
+.wios-mb-2 { margin-bottom: var(--wios-sp2); } .wios-mb-4 { margin-bottom: var(--wios-sp4); }
+.wios-mb-6 { margin-bottom: var(--wios-sp6); } .wios-mb-8 { margin-bottom: var(--wios-sp8); }
+.wios-mt-auto { margin-top: auto; }
+
+/* ─── Text Utilities ─────────────────────────────────────── */
+.wios-text-left   { text-align: left; }
+.wios-text-center { text-align: center; }
+.wios-text-right  { text-align: right; }
+.wios-truncate    { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.wios-text-primary { color: var(--wios-primary); }
+.wios-text-success { color: var(--wios-success); }
+.wios-text-warning { color: var(--wios-warning); }
+.wios-text-error   { color: var(--wios-error); }
+.wios-text-info    { color: var(--wios-info); }
+.wios-text-1       { color: var(--wios-text); }
+.wios-text-2       { color: var(--wios-text-2); }
+.wios-text-3       { color: var(--wios-text-3); }
+.wios-text-4       { color: var(--wios-text-4); }
+
+.wios-fw-400 { font-weight: 400; }
+.wios-fw-500 { font-weight: 500; }
+.wios-fw-600 { font-weight: 600; }
+.wios-fw-700 { font-weight: 700; }
+.wios-uppercase { text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ─── Surface Utilities ──────────────────────────────────── */
+.wios-bg        { background: var(--wios-bg); }
+.wios-surface   { background: var(--wios-surface); }
+.wios-surface-2 { background: var(--wios-surface-2); }
+.wios-surface-3 { background: var(--wios-surface-3); }
+
+/* ─── Border & Radius Utilities ──────────────────────────── */
+.wios-border { border: 0.5px solid var(--wios-border); }
+.wios-divider-h { border: none; border-top: 0.5px solid var(--wios-divider); }
+.wios-divider-v { border: none; border-left: 0.5px solid var(--wios-divider); }
+
+.wios-r1   { border-radius: var(--wios-r1); }  .wios-r2 { border-radius: var(--wios-r2); }
+.wios-r3   { border-radius: var(--wios-r3); }  .wios-r4 { border-radius: var(--wios-r4); }
+.wios-r5   { border-radius: var(--wios-r5); }  .wios-r6 { border-radius: var(--wios-r6); }
+.wios-rpill { border-radius: var(--wios-rpill); }
+
+/* ─── Shadow Utilities ───────────────────────────────────── */
+.wios-shadow-sm { box-shadow: var(--wios-shadow-sm); }
+.wios-shadow-md { box-shadow: var(--wios-shadow-md); }
+.wios-shadow-lg { box-shadow: var(--wios-shadow-lg); }
+.wios-shadow-none { box-shadow: none; }
+
+/* ─── Display & Width Utilities ──────────────────────────── */
+.wios-hidden  { display: none; }
+.wios-block   { display: block; }
+.wios-inline  { display: inline; }
+.wios-w-full  { width: 100%; }
+.wios-h-full  { height: 100%; }
+.wios-min-w-0 { min-width: 0; }
+
+/* ─── Overflow Utilities ─────────────────────────────────── */
+.wios-overflow-hidden { overflow: hidden; }
+.wios-overflow-auto   { overflow: auto; }
+
+/* ─── Position Utilities ─────────────────────────────────── */
+.wios-relative { position: relative; }
+.wios-absolute { position: absolute; }
+.wios-fixed    { position: fixed; }
+.wios-sticky   { position: sticky; }
+
+/* ═══════════════════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Button ─────────────────────────────────────────────── */
+.wios-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: none; border-radius: var(--wios-rpill);
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  transition: opacity var(--wios-fast), transform var(--wios-fast), background var(--wios-fast);
+  user-select: none; text-decoration: none;
+}
+.wios-btn:hover  { opacity: 0.86; }
+.wios-btn:active { transform: scale(0.96); }
+.wios-btn:focus-visible { outline: 2px solid var(--wios-primary); outline-offset: 3px; }
+.wios-btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+/* Sizes */
+.wios-btn-lg { font-size: var(--wios-btn1-fs); font-weight: var(--wios-btn1-w); padding: 0.6rem 1.375rem; }
+.wios-btn-md { font-size: var(--wios-btn2-fs); font-weight: var(--wios-btn2-w); padding: 0.42rem 1rem; }
+.wios-btn-sm { font-size: 0.75rem;             font-weight: 600;               padding: 0.28rem 0.75rem; }
+.wios-btn-xs { font-size: 0.6875rem;           font-weight: 600;               padding: 0.18rem 0.6rem; }
+
+/* Variants */
+.wios-btn-primary   { background: var(--wios-primary);   color: #fff; }
+.wios-btn-success   { background: var(--wios-success);   color: #fff; }
+.wios-btn-warning   { background: var(--wios-warning);   color: #fff; }
+.wios-btn-danger    { background: var(--wios-error);     color: #fff; }
+.wios-btn-info      { background: var(--wios-info);      color: #fff; }
+.wios-btn-ghost     { background: var(--wios-surface-2); border: 0.5px solid var(--wios-border); color: var(--wios-primary); }
+.wios-btn-neutral   { background: var(--wios-surface-2); border: 0.5px solid var(--wios-border); color: var(--wios-text-2); }
+.wios-btn-outline   { background: transparent; border: 1.5px solid var(--wios-primary); color: var(--wios-primary); }
+
+/* Icon button */
+.wios-btn-icon {
+  width: 2.25rem; height: 2.25rem; padding: 0;
+  background: var(--wios-surface-2); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r3); color: var(--wios-text-2);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background var(--wios-fast), transform var(--wios-fast);
+  font-family: inherit;
+}
+.wios-btn-icon:hover  { background: var(--wios-surface-3); }
+.wios-btn-icon:active { transform: scale(0.94); }
+.wios-btn-icon-sm { width: 1.75rem; height: 1.75rem; border-radius: var(--wios-r2); }
+.wios-btn-icon-lg { width: 2.75rem; height: 2.75rem; border-radius: var(--wios-r4); }
+
+/* ─── Card ───────────────────────────────────────────────── */
+.wios-card {
+  background: var(--wios-surface);
+  border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r6);
+  padding: var(--wios-sp5);
+  box-shadow: var(--wios-shadow-sm);
+  transition: box-shadow var(--wios-ios), transform var(--wios-ios);
+}
+.wios-card-hover:hover { box-shadow: var(--wios-shadow-md); transform: translateY(-1px); }
+.wios-card-flat  { box-shadow: none; }
+.wios-card-glass {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+}
+[data-wios-theme="dark"] .wios-card-glass { background: rgba(255,255,255,0.06); }
+
+/* App card row */
+.wios-app-card {
+  display: flex; align-items: center; gap: var(--wios-sp4);
+  background: var(--wios-surface); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r5); padding: var(--wios-sp4);
+  transition: background var(--wios-fast);
+}
+.wios-app-card:hover { background: var(--wios-surface-2); }
+
+/* App icon */
+.wios-app-icon {
+  width: 3rem; height: 3rem; border-radius: var(--wios-r3); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.375rem; border: 0.5px solid var(--wios-border);
+  overflow: hidden;
+}
+.wios-app-icon-sm { width: 2.25rem; height: 2.25rem; border-radius: var(--wios-r2); font-size: 1rem; }
+.wios-app-icon-lg { width: 4rem;    height: 4rem;    border-radius: var(--wios-r4); font-size: 1.75rem; }
+
+/* Stat card content */
+.wios-stat-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--wios-text-4); margin-bottom: var(--wios-sp2); }
+.wios-stat-value { font-size: var(--wios-h4-fs); font-weight: 700; letter-spacing: -0.01em; color: var(--wios-text); }
+.wios-stat-sub   { font-size: var(--wios-body2-fs); color: var(--wios-text-3); margin-top: 4px; }
+
+/* ─── Badge ──────────────────────────────────────────────── */
+.wios-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700;
+  border-radius: var(--wios-rpill); padding: 0.18rem 0.42rem;
+  min-width: 1.2rem; height: 1.2rem; white-space: nowrap;
+  line-height: 1;
+}
+.wios-badge-primary { background: var(--wios-primary); color: #fff; }
+.wios-badge-success { background: var(--wios-success); color: #fff; }
+.wios-badge-warning { background: var(--wios-warning); color: #fff; }
+.wios-badge-danger  { background: var(--wios-error);   color: #fff; }
+.wios-badge-info    { background: var(--wios-info);    color: #fff; }
+.wios-badge-neutral { background: var(--wios-surface-3); color: var(--wios-text-3); }
+
+.wios-badge-dot {
+  width: 0.45rem; height: 0.45rem; min-width: unset;
+  padding: 0; border-radius: 50%;
+}
+.wios-badge-dot.wios-badge-success { box-shadow: 0 0 0 2px rgba(52,199,89,.25); }
+.wios-badge-dot.wios-badge-danger  { box-shadow: 0 0 0 2px rgba(255,59,48,.25); }
+.wios-badge-dot.wios-badge-primary { box-shadow: 0 0 0 2px rgba(0,122,255,.25); }
+.wios-badge-dot.wios-badge-warning { box-shadow: 0 0 0 2px rgba(255,149,0,.25); }
+
+/* Icon with badge overlay */
+.wios-icon-wrap {
+  position: relative; display: inline-flex;
+  width: 2.25rem; height: 2.25rem;
+  background: var(--wios-surface-2); border-radius: var(--wios-r3);
+  align-items: center; justify-content: center; border: 0.5px solid var(--wios-border);
+}
+.wios-icon-wrap > .wios-badge { position: absolute; top: -0.3rem; right: -0.3rem; }
+
+/* ─── Tag / Chip ─────────────────────────────────────────── */
+.wios-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.8125rem; font-weight: 600;
+  border-radius: var(--wios-rpill); padding: 0.28rem 0.7rem;
+  border: 0.5px solid var(--wios-border); background: var(--wios-surface-2);
+  color: var(--wios-text-2); cursor: default; transition: background var(--wios-fast);
+}
+.wios-tag:hover { background: var(--wios-surface-3); }
+.wios-tag-primary { background: rgba(0,122,255,.1); border-color: rgba(0,122,255,.2); color: var(--wios-primary); }
+.wios-tag-success { background: rgba(52,199,89,.1); border-color: rgba(52,199,89,.2); color: var(--wios-success); }
+.wios-tag-warning { background: rgba(255,149,0,.1); border-color: rgba(255,149,0,.2); color: var(--wios-warning); }
+.wios-tag-danger  { background: rgba(255,59,48,.1);  border-color: rgba(255,59,48,.2);  color: var(--wios-error); }
+.wios-tag-info    { background: rgba(41,151,255,.1); border-color: rgba(41,151,255,.2); color: var(--wios-info); }
+[data-wios-theme="dark"] .wios-tag-primary { background: rgba(10,132,255,.15); border-color: rgba(10,132,255,.3); }
+
+/* ─── Label / Lozenge ────────────────────────────────────── */
+.wios-label {
+  display: inline-flex; align-items: center;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+  border-radius: var(--wios-r1); padding: 0.18rem 0.42rem;
+  text-transform: uppercase;
+}
+.wios-label-primary { background: rgba(0,122,255,.1);   color: var(--wios-primary); }
+.wios-label-success { background: rgba(52,199,89,.12);  color: var(--wios-success); }
+.wios-label-warning { background: rgba(255,149,0,.12);  color: var(--wios-warning); }
+.wios-label-danger  { background: rgba(255,59,48,.12);  color: var(--wios-error); }
+.wios-label-info    { background: rgba(41,151,255,.12); color: var(--wios-info); }
+.wios-label-neutral { background: var(--wios-surface-2); color: var(--wios-text-3); }
+
+/* ─── Status Indicator ───────────────────────────────────── */
+.wios-status { display: inline-flex; align-items: center; gap: 6px; font-size: var(--wios-body2-fs); color: var(--wios-text-2); }
+.wios-status-dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; flex-shrink: 0; }
+.wios-status-online  .wios-status-dot { background: var(--wios-success); box-shadow: 0 0 0 2px rgba(52,199,89,.25); }
+.wios-status-busy    .wios-status-dot { background: var(--wios-error);   box-shadow: 0 0 0 2px rgba(255,59,48,.25); }
+.wios-status-pending .wios-status-dot { background: var(--wios-warning); box-shadow: 0 0 0 2px rgba(255,149,0,.25); }
+.wios-status-offline .wios-status-dot { background: var(--wios-text-4); }
+
+/* ─── Inputs ─────────────────────────────────────────────── */
+.wios-input {
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: var(--wios-surface-2); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r3); color: var(--wios-text);
+  font-size: var(--wios-body1-fs); font-family: inherit;
+  outline: none; transition: border-color var(--wios-fast), background var(--wios-fast), box-shadow var(--wios-fast);
+}
+.wios-input::placeholder { color: var(--wios-text-4); }
+.wios-input:focus { border-color: var(--wios-primary); background: var(--wios-surface); box-shadow: 0 0 0 3px rgba(0,122,255,.12); }
+.wios-input-success { border-color: var(--wios-success) !important; }
+.wios-input-success:focus { box-shadow: 0 0 0 3px rgba(52,199,89,.12) !important; }
+.wios-input-error   { border-color: var(--wios-error) !important; }
+.wios-input-error:focus { box-shadow: 0 0 0 3px rgba(255,59,48,.12) !important; }
+
+.wios-select {
+  width: 100%; padding: 0.65rem 0.9rem; padding-right: 2.5rem;
+  background: var(--wios-surface-2); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r3); color: var(--wios-text);
+  font-size: var(--wios-body1-fs); font-family: inherit;
+  outline: none; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.9rem center;
+  transition: border-color var(--wios-fast);
+}
+.wios-select:focus { border-color: var(--wios-primary); box-shadow: 0 0 0 3px rgba(0,122,255,.12); }
+
+.wios-textarea {
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: var(--wios-surface-2); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r3); color: var(--wios-text);
+  font-size: var(--wios-body1-fs); font-family: inherit;
+  outline: none; resize: vertical; min-height: 6rem;
+  transition: border-color var(--wios-fast), background var(--wios-fast);
+}
+.wios-textarea:focus { border-color: var(--wios-primary); background: var(--wios-surface); box-shadow: 0 0 0 3px rgba(0,122,255,.12); }
+
+/* Form structure */
+.wios-form-group { margin-bottom: var(--wios-sp4); }
+.wios-form-label { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--wios-text-2); margin-bottom: var(--wios-sp2); }
+.wios-form-hint  { font-size: 0.75rem; color: var(--wios-text-4); margin-top: var(--wios-sp1); }
+.wios-form-error { font-size: 0.75rem; color: var(--wios-error); margin-top: var(--wios-sp1); }
+.wios-form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: var(--wios-sp4); }
+.wios-form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--wios-sp3); }
+.wios-form-section { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wios-text-4); margin-bottom: var(--wios-sp4); }
+.wios-form-divider { border: none; border-top: 0.5px solid var(--wios-divider); margin: var(--wios-sp5) 0; }
+
+/* ─── Toggle Switch ──────────────────────────────────────── */
+.wios-toggle { display: flex; align-items: center; gap: var(--wios-sp3); cursor: pointer; user-select: none; }
+.wios-toggle-track {
+  width: 2.5rem; height: 1.5rem; background: var(--wios-surface-3);
+  border-radius: var(--wios-rpill); position: relative;
+  transition: background var(--wios-ios); flex-shrink: 0;
+}
+.wios-toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 1.125rem; height: 1.125rem;
+  background: #fff; border-radius: 50%;
+  transition: transform var(--wios-ios);
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.wios-toggle input { display: none; }
+.wios-toggle input:checked + .wios-toggle-track { background: var(--wios-success); }
+.wios-toggle input:checked + .wios-toggle-track .wios-toggle-thumb { transform: translateX(1rem); }
+
+/* ─── Checkbox ───────────────────────────────────────────── */
+.wios-checkbox { display: flex; align-items: center; gap: var(--wios-sp3); cursor: pointer; user-select: none; }
+.wios-checkbox input { display: none; }
+.wios-checkbox-box {
+  width: 1.1rem; height: 1.1rem; border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r2); background: var(--wios-surface-2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all var(--wios-fast);
+}
+.wios-checkbox input:checked + .wios-checkbox-box { background: var(--wios-primary); border-color: var(--wios-primary); }
+.wios-checkbox input:checked + .wios-checkbox-box::after {
+  content: ''; display: block;
+  width: 5px; height: 9px;
+  border: 2px solid #fff; border-top: none; border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+/* ─── Radio ──────────────────────────────────────────────── */
+.wios-radio { display: flex; align-items: center; gap: var(--wios-sp3); cursor: pointer; user-select: none; }
+.wios-radio input { display: none; }
+.wios-radio-circle {
+  width: 1.1rem; height: 1.1rem; border: 0.5px solid var(--wios-border);
+  border-radius: 50%; background: var(--wios-surface-2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all var(--wios-fast);
+}
+.wios-radio input:checked + .wios-radio-circle { border-color: var(--wios-primary); }
+.wios-radio input:checked + .wios-radio-circle::after { content: ''; display: block; width: 0.5rem; height: 0.5rem; background: var(--wios-primary); border-radius: 50%; }
+
+/* ─── Tabs ───────────────────────────────────────────────── */
+.wios-tabs {
+  display: flex; background: var(--wios-surface);
+  border: 0.5px solid var(--wios-border); border-radius: var(--wios-r5);
+  padding: 0.2rem; gap: 0.2rem;
+}
+.wios-tab {
+  flex: 1; text-align: center; padding: 0.38rem 0.6rem;
+  font-size: 0.8125rem; font-weight: 600; border-radius: var(--wios-r4);
+  cursor: pointer; color: var(--wios-text-3);
+  transition: all var(--wios-fast); border: none; background: transparent;
+  white-space: nowrap; font-family: inherit;
+}
+.wios-tab:hover { color: var(--wios-text-2); background: var(--wios-surface-2); }
+.wios-tab.wios-active { background: var(--wios-primary); color: #fff; }
+
+/* Underline tab variant */
+.wios-tabs-underline {
+  display: flex; gap: 0; background: transparent;
+  border: none; border-bottom: 0.5px solid var(--wios-divider); padding: 0;
+}
+.wios-tab-underline {
+  padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600;
+  color: var(--wios-text-3); border: none; background: transparent;
+  cursor: pointer; font-family: inherit; position: relative;
+  transition: color var(--wios-fast); border-radius: 0;
+}
+.wios-tab-underline::after {
+  content: ''; position: absolute; bottom: -0.5px; left: 0; right: 0;
+  height: 2px; background: var(--wios-primary); transform: scaleX(0);
+  transition: transform var(--wios-ios);
+}
+.wios-tab-underline:hover { color: var(--wios-text-2); }
+.wios-tab-underline.wios-active { color: var(--wios-primary); }
+.wios-tab-underline.wios-active::after { transform: scaleX(1); }
+
+/* ─── Navbar ─────────────────────────────────────────────── */
+.wios-navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--wios-sp4) var(--wios-sp8);
+  background: var(--wios-surface); border-bottom: 0.5px solid var(--wios-divider);
+  position: sticky; top: 0; z-index: var(--wios-z-sticky);
+  transition: background var(--wios-ios);
+}
+.wios-navbar-brand { font-size: 1.0625rem; font-weight: 700; color: var(--wios-text); text-decoration: none; letter-spacing: -0.01em; }
+.wios-navbar-links { display: flex; align-items: center; gap: var(--wios-sp6); }
+.wios-navbar-link  { font-size: 0.9375rem; font-weight: 500; color: var(--wios-text-3); text-decoration: none; transition: color var(--wios-fast); }
+.wios-navbar-link:hover { color: var(--wios-text); }
+.wios-navbar-link.wios-active { color: var(--wios-primary); }
+
+/* ─── Sidebar ────────────────────────────────────────────── */
+.wios-sidebar {
+  width: 220px; flex-shrink: 0; background: var(--wios-surface);
+  border-right: 0.5px solid var(--wios-divider); position: sticky; top: 0;
+  height: 100vh; overflow-y: auto; padding: var(--wios-sp6) 0;
+  display: flex; flex-direction: column; transition: background var(--wios-ios);
+}
+.wios-sidebar-section { padding: var(--wios-sp3) var(--wios-sp5) var(--wios-sp2); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--wios-text-4); }
+.wios-sidebar-link {
+  display: block; padding: var(--wios-sp2) var(--wios-sp5);
+  font-size: 0.875rem; font-weight: 500; color: var(--wios-text-3);
+  text-decoration: none; transition: background var(--wios-fast), color var(--wios-fast);
+  border-left: 2px solid transparent;
+}
+.wios-sidebar-link:hover { color: var(--wios-text); background: var(--wios-surface-2); }
+.wios-sidebar-link.wios-active { color: var(--wios-primary); background: rgba(0,122,255,.08); border-left-color: var(--wios-primary); }
+[data-wios-theme="dark"] .wios-sidebar-link.wios-active { background: rgba(10,132,255,.12); }
+
+/* ─── Modal ──────────────────────────────────────────────── */
+.wios-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  z-index: var(--wios-z-modal); display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity var(--wios-ios);
+  pointer-events: none;
+}
+.wios-modal-backdrop.wios-open { opacity: 1; pointer-events: all; }
+.wios-modal {
+  background: var(--wios-surface); border-radius: var(--wios-r6);
+  padding: var(--wios-sp6); box-shadow: var(--wios-shadow-lg);
+  max-width: 90vw; width: 100%;
+  transform: translateY(1rem) scale(0.97);
+  transition: transform var(--wios-ios);
+}
+.wios-modal-sm  { max-width: 360px; }
+.wios-modal-md  { max-width: 520px; }
+.wios-modal-lg  { max-width: 720px; }
+.wios-modal-backdrop.wios-open .wios-modal { transform: translateY(0) scale(1); }
+.wios-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--wios-sp5); }
+.wios-modal-title  { font-size: var(--wios-h5-fs); font-weight: 700; color: var(--wios-text); }
+.wios-modal-close  { background: var(--wios-surface-2); border: none; cursor: pointer; width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--wios-text-3); font-size: 1rem; transition: background var(--wios-fast); }
+.wios-modal-close:hover { background: var(--wios-surface-3); }
+.wios-modal-body   { color: var(--wios-text-2); line-height: 1.6; }
+.wios-modal-footer { display: flex; gap: var(--wios-sp3); justify-content: flex-end; margin-top: var(--wios-sp5); }
+
+/* ─── Drawer ─────────────────────────────────────────────── */
+.wios-drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  z-index: var(--wios-z-drawer); opacity: 0;
+  transition: opacity var(--wios-ios); pointer-events: none;
+}
+.wios-drawer-backdrop.wios-open { opacity: 1; pointer-events: all; }
+.wios-drawer {
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: 380px; max-width: 90vw;
+  background: var(--wios-surface); box-shadow: var(--wios-shadow-lg);
+  z-index: var(--wios-z-drawer); padding: var(--wios-sp6);
+  transform: translateX(100%); transition: transform var(--wios-ios);
+}
+.wios-drawer.wios-open { transform: translateX(0); }
+.wios-drawer-left { right: auto; left: 0; transform: translateX(-100%); }
+.wios-drawer-left.wios-open { transform: translateX(0); }
+
+/* Bottom sheet */
+.wios-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--wios-surface); border-radius: var(--wios-r6) var(--wios-r6) 0 0;
+  padding: var(--wios-sp6); box-shadow: var(--wios-shadow-lg);
+  z-index: var(--wios-z-drawer);
+  transform: translateY(100%); transition: transform var(--wios-ios);
+}
+.wios-sheet.wios-open { transform: translateY(0); }
+.wios-sheet-handle { width: 2.5rem; height: 4px; background: var(--wios-surface-3); border-radius: var(--wios-rpill); margin: 0 auto var(--wios-sp5); }
+
+/* ─── Toast ──────────────────────────────────────────────── */
+.wios-toast-container {
+  position: fixed; bottom: var(--wios-sp6); right: var(--wios-sp6);
+  z-index: var(--wios-z-max); display: flex; flex-direction: column;
+  gap: var(--wios-sp2); pointer-events: none;
+}
+.wios-toast {
+  display: flex; align-items: center; gap: var(--wios-sp3);
+  background: var(--wios-surface); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r5); padding: var(--wios-sp3) var(--wios-sp4);
+  box-shadow: var(--wios-shadow-lg); pointer-events: all;
+  animation: wios-toast-in 0.35s cubic-bezier(0.25,0.1,0.25,1) forwards;
+  min-width: 240px; max-width: 360px;
+}
+.wios-toast.wios-toast-out { animation: wios-toast-out 0.3s forwards; }
+.wios-toast-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; }
+.wios-toast-primary .wios-toast-icon { background: rgba(0,122,255,.15); color: var(--wios-primary); }
+.wios-toast-success .wios-toast-icon { background: rgba(52,199,89,.15); color: var(--wios-success); }
+.wios-toast-warning .wios-toast-icon { background: rgba(255,149,0,.15); color: var(--wios-warning); }
+.wios-toast-danger  .wios-toast-icon { background: rgba(255,59,48,.15);  color: var(--wios-error); }
+.wios-toast-msg     { font-size: 0.875rem; font-weight: 500; color: var(--wios-text); flex: 1; }
+.wios-toast-sub     { font-size: 0.75rem; color: var(--wios-text-3); }
+
+@keyframes wios-toast-in  { from { opacity: 0; transform: translateX(100%) scale(0.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
+@keyframes wios-toast-out { from { opacity: 1; transform: translateX(0) scale(1); } to { opacity: 0; transform: translateX(100%) scale(0.95); } }
+
+/* ─── Alert / Banner ─────────────────────────────────────── */
+.wios-alert {
+  display: flex; gap: var(--wios-sp3); align-items: flex-start;
+  padding: var(--wios-sp4); border-radius: var(--wios-r4);
+  border: 0.5px solid transparent;
+}
+.wios-alert-primary { background: rgba(0,122,255,.08); border-color: rgba(0,122,255,.2); color: var(--wios-primary); }
+.wios-alert-success { background: rgba(52,199,89,.08); border-color: rgba(52,199,89,.2); color: var(--wios-success); }
+.wios-alert-warning { background: rgba(255,149,0,.08); border-color: rgba(255,149,0,.2); color: var(--wios-warning); }
+.wios-alert-danger  { background: rgba(255,59,48,.08);  border-color: rgba(255,59,48,.2); color: var(--wios-error); }
+.wios-alert-title   { font-weight: 700; font-size: 0.9375rem; }
+.wios-alert-body    { font-size: 0.875rem; opacity: 0.85; margin-top: 2px; }
+
+/* ─── Progress Bar ───────────────────────────────────────── */
+.wios-progress { width: 100%; height: 6px; background: var(--wios-surface-3); border-radius: var(--wios-rpill); overflow: hidden; }
+.wios-progress-bar { height: 100%; border-radius: var(--wios-rpill); transition: width 0.5s cubic-bezier(0.25,0.1,0.25,1); background: var(--wios-primary); }
+.wios-progress-bar.wios-success { background: var(--wios-success); }
+.wios-progress-bar.wios-warning { background: var(--wios-warning); }
+.wios-progress-bar.wios-danger  { background: var(--wios-error); }
+.wios-progress-sm  { height: 3px; }
+.wios-progress-lg  { height: 10px; }
+
+/* ─── Spinner ────────────────────────────────────────────── */
+.wios-spinner {
+  width: 1.25rem; height: 1.25rem; border: 2px solid var(--wios-surface-3);
+  border-top-color: var(--wios-primary); border-radius: 50%;
+  animation: wios-spin 0.7s linear infinite;
+  display: inline-block;
+}
+.wios-spinner-sm { width: 0.875rem; height: 0.875rem; }
+.wios-spinner-lg { width: 2rem;     height: 2rem; border-width: 3px; }
+@keyframes wios-spin { to { transform: rotate(360deg); } }
+
+/* ─── Skeleton ───────────────────────────────────────────── */
+.wios-skeleton {
+  background: linear-gradient(90deg, var(--wios-surface-2) 25%, var(--wios-surface-3) 50%, var(--wios-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: wios-shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--wios-r2);
+}
+@keyframes wios-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ─── Avatar ─────────────────────────────────────────────── */
+.wios-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-weight: 600; overflow: hidden;
+  flex-shrink: 0; background: var(--wios-surface-3); color: var(--wios-text-3);
+}
+.wios-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wios-avatar-xs { width: 1.5rem;  height: 1.5rem;  font-size: 0.6rem; }
+.wios-avatar-sm { width: 2rem;    height: 2rem;    font-size: 0.75rem; }
+.wios-avatar-md { width: 2.5rem;  height: 2.5rem;  font-size: 0.9rem; }
+.wios-avatar-lg { width: 3rem;    height: 3rem;    font-size: 1.1rem; }
+.wios-avatar-xl { width: 4rem;    height: 4rem;    font-size: 1.4rem; }
+.wios-avatar-stack { display: flex; }
+.wios-avatar-stack .wios-avatar { margin-left: -0.5rem; border: 2px solid var(--wios-surface); }
+.wios-avatar-stack .wios-avatar:first-child { margin-left: 0; }
+
+/* ─── Tooltip ────────────────────────────────────────────── */
+[data-wios-tooltip] { position: relative; }
+[data-wios-tooltip]::before {
+  content: attr(data-wios-tooltip); position: absolute;
+  bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--wios-text); color: var(--wios-bg);
+  font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+  padding: 0.3rem 0.6rem; border-radius: var(--wios-r2);
+  opacity: 0; transition: opacity var(--wios-fast);
+  pointer-events: none; z-index: var(--wios-z-dropdown);
+}
+[data-wios-tooltip]:hover::before { opacity: 1; }
+
+/* ─── Dropdown ───────────────────────────────────────────── */
+.wios-dropdown { position: relative; display: inline-block; }
+.wios-dropdown-menu {
+  position: absolute; top: calc(100% + var(--wios-sp2)); right: 0;
+  background: var(--wios-surface); border: 0.5px solid var(--wios-border);
+  border-radius: var(--wios-r4); box-shadow: var(--wios-shadow-lg);
+  min-width: 180px; z-index: var(--wios-z-dropdown);
+  overflow: hidden; padding: var(--wios-sp1) 0;
+  opacity: 0; transform: translateY(-6px) scale(0.97);
+  transition: opacity var(--wios-ios), transform var(--wios-ios);
+  pointer-events: none;
+}
+.wios-dropdown-menu.wios-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+.wios-dropdown-item {
+  display: flex; align-items: center; gap: var(--wios-sp3);
+  padding: var(--wios-sp2) var(--wios-sp4);
+  font-size: 0.9375rem; color: var(--wios-text-2); cursor: pointer;
+  border: none; background: transparent; font-family: inherit;
+  width: 100%; text-align: left; text-decoration: none;
+  transition: background var(--wios-fast);
+}
+.wios-dropdown-item:hover { background: var(--wios-surface-2); color: var(--wios-text); }
+.wios-dropdown-item-danger { color: var(--wios-error); }
+.wios-dropdown-item-danger:hover { background: rgba(255,59,48,.06); }
+.wios-dropdown-divider { height: 0.5px; background: var(--wios-divider); margin: var(--wios-sp1) 0; }
+
+/* ─── List Group ─────────────────────────────────────────── */
+.wios-list { background: var(--wios-surface); border-radius: var(--wios-r5); overflow: hidden; border: 0.5px solid var(--wios-border); }
+.wios-list-item {
+  display: flex; align-items: center; gap: var(--wios-sp4);
+  padding: var(--wios-sp4) var(--wios-sp5); border-bottom: 0.5px solid var(--wios-divider);
+  transition: background var(--wios-fast); cursor: default;
+}
+.wios-list-item:last-child { border-bottom: none; }
+.wios-list-item-action { cursor: pointer; }
+.wios-list-item-action:hover { background: var(--wios-surface-2); }
+.wios-list-item-content { flex: 1; min-width: 0; }
+.wios-list-item-title { font-size: var(--wios-body1-fs); font-weight: 600; color: var(--wios-text); }
+.wios-list-item-sub   { font-size: var(--wios-body2-fs); color: var(--wios-text-3); margin-top: 2px; }
+
+/* ─── Table ──────────────────────────────────────────────── */
+.wios-table-wrap { overflow: auto; border: 0.5px solid var(--wios-border); border-radius: var(--wios-r5); }
+.wios-table { width: 100%; border-collapse: collapse; }
+.wios-table th { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wios-text-4); padding: var(--wios-sp3) var(--wios-sp4); background: var(--wios-surface-2); text-align: left; white-space: nowrap; border-bottom: 0.5px solid var(--wios-divider); }
+.wios-table td { padding: var(--wios-sp3) var(--wios-sp4); font-size: 0.875rem; color: var(--wios-text-2); border-bottom: 0.5px solid var(--wios-divider); vertical-align: middle; }
+.wios-table tr:last-child td { border-bottom: none; }
+.wios-table-hover tr:hover td { background: var(--wios-surface-2); }
+.wios-table-striped tr:nth-child(even) td { background: var(--wios-surface-2); }
+
+/* ─── Hero / Media ───────────────────────────────────────── */
+.wios-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.wios-hero-body { padding: var(--wios-sp7) var(--wios-sp8); display: flex; flex-direction: column; justify-content: center; gap: var(--wios-sp3); }
+.wios-hero-body-centered { align-items: center; text-align: center; }
+.wios-hero-title { font-size: clamp(1.5rem, 3vw, var(--wios-h3-fs)); font-weight: 700; line-height: 1.2; color: var(--wios-text); }
+.wios-hero-sub   { font-size: var(--wios-body1-fs); color: var(--wios-text-3); line-height: 1.6; }
+.wios-hero-actions { display: flex; gap: var(--wios-sp3); flex-wrap: wrap; }
+
+.wios-hero-split { display: grid; }
+.wios-hero-split-left  { grid-template-columns: 1fr 1.6fr; }
+.wios-hero-split-right { grid-template-columns: 1.6fr 1fr; }
+
+.wios-media {
+  position: relative; overflow: hidden;
+  background: var(--wios-surface-3); display: flex;
+  align-items: center; justify-content: center; min-height: 200px;
+}
+.wios-media img, .wios-media video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+.wios-media-contain img { object-fit: contain; padding: 0.5rem; }
+.wios-media-overlay::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,.04) 100%);
+  pointer-events: none;
+}
+
+/* ─── Divider ────────────────────────────────────────────── */
+.wios-hr { border: none; border-top: 0.5px solid var(--wios-divider); margin: 0; }
+
+/* ─── Elevation ──────────────────────────────────────────── */
+.wios-elevated-1 { box-shadow: var(--wios-shadow-sm); }
+.wios-elevated-2 { box-shadow: var(--wios-shadow-md); }
+.wios-elevated-3 { box-shadow: var(--wios-shadow-lg); }
+
+/* ─── Backdrop Blur ──────────────────────────────────────── */
+.wios-blur-sm { backdrop-filter: blur(8px);  -webkit-backdrop-filter: blur(8px); }
+.wios-blur-md { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.wios-blur-lg { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+
+
+
+
