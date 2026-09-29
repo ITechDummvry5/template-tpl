@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Transition</title>
+<style>
+  * { padding: 0; margin: 0; }
+  body { background: #fff; overflow-x: hidden; font-family: arial; }
+
+  /* ---------- demo page styles (not needed for the utility) ---------- */
+  .content { padding: 200px 0 0 200px; color: #000; height: 300px; }
+  .content:focus { outline: none; }
+  .cta {
+    outline: none; border: none; cursor: pointer;
+    text-transform: uppercase; background: #202020; color: #eaeaea;
+    margin-top: 20px; padding: 10px 40px; font: inherit;
+  }
+  .cta:focus-visible { outline: 2px solid #202020; outline-offset: 3px; }
+  @media (max-width: 700px) { .content { padding: 120px 24px 0; } }
+
+  /* ===================== PAGE TRANSITION (copy CSS from here) ===================== */
+  [data-page] { display: none; }
+  [data-page].is-active { display: block; }
+
+  .pt-panel {
+    position: fixed; top: 0; left: -10%;
+    width: 120%; height: 100%;
+    background: #d6d6d6;                 /* sweep color */
+    box-shadow: 10px 10px 5px #eaeaea;
+    z-index: 1000;
+    transform: translateX(-110%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* ===================== (copy CSS to here) ===================== */
+</style>
+</head>
+<body>
+
+<!--
+  USAGE
+    1. Wrap each page in an element with data-page="name". Mark the first one with class "is-active".
+    2. Put data-go="name" on any button or link to sweep to that page.
+    3. From JS you can also call:  PageTransition.go('name')
+  Add as many pages as you want. The sweep panel is created automatically.
+-->
+
+<!-- ===================== PAGES (copy HTML from here) ===================== -->
+<section data-page="home" class="is-active">
+  <div class="content">
+    <h1>Heading title</h1>
+    <p>Lorem ipsum dolor sit amet</p>
+    <button class="cta" data-go="about">Click</button>
+  </div>
+</section>
+
+<section data-page="about">
+  <div class="content">
+    <h1>Second page</h1>
+    <p>Consectetur adipiscing elit, sed do eiusmod</p>
+    <button class="cta" data-go="home">Back</button>
+  </div>
+</section>
+<!-- ===================== (copy HTML to here) ===================== -->
+
+<!-- ===================== PAGE TRANSITION (copy script from here) ===================== -->
+<script>
+(() => {
+  const DURATION = 700;                     // ms for the sweep in, and again for the sweep out
+  const HOLD     = 120;                     // ms the screen stays covered while pages swap
+  const EASE     = 'cubic-bezier(.77,0,.18,1)';
+
+  const pages = [...document.querySelectorAll('[data-page]')];
+  if (!pages.length) return;
+
+  const panel = document.createElement('div');
+  panel.className = 'pt-panel';
+  panel.setAttribute('aria-hidden', 'true');
+  document.body.append(panel);
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  let current = pages.find(p => p.classList.contains('is-active')) || pages[0];
+  current.classList.add('is-active');
+  let busy = false;
+
+  const sweep = (from, to) => panel.animate(
+    [{ transform: from }, { transform: to }],
+    { duration: DURATION, easing: EASE, fill: 'forwards' }
+  ).finished;
+
+  async function go(name) {
+    const next = pages.find(p => p.dataset.page === name);
+    if (!next || next === current || busy) return;
+    busy = true;
+
+    const swap = () => {
+      current.classList.remove('is-active');
+      next.classList.add('is-active');
+      current = next;
+      scrollTo(0, 0);
+      next.setAttribute('tabindex', '-1');
+      next.focus({ preventScroll: true });
+    };
+
+    if (reduce.matches) { swap(); busy = false; return; }
+
+    panel.getAnimations().forEach(a => a.cancel());
+    panel.style.visibility = 'visible';
+    await sweep('translateX(-110%) skewX(-5deg)', 'translateX(0) skewX(0deg)');   // cover
+    swap();
+    await new Promise(r => setTimeout(r, HOLD));
+    await sweep('translateX(0) skewX(0deg)', 'translateX(110%) skewX(5deg)');     // reveal
+    panel.style.visibility = 'hidden';
+    busy = false;
+  }
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-go]');
+    if (!t) return;
+    e.preventDefault();
+    go(t.dataset.go);
+  });
+
+  window.PageTransition = { go };
+})();
+</script>
+<!-- ===================== (copy script to here) ===================== -->
+
+</body>
+</html>

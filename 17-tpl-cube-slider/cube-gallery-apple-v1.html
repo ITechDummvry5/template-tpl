@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cube Gallery Template</title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f5f5f7;--fg:#1d1d1f;--muted:#6e6e73;--blue:#0071e3;--blue-h:#0077ed;--tag:#bf4800;
+  --card:rgba(255,255,255,.72);--line:rgba(0,0,0,.1);--face:#e8e8ed;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --bg:#000;--fg:#f5f5f7;--muted:#86868b;--blue:#2997ff;--blue-h:#0a84ff;--tag:#ff9f0a;
+  --card:rgba(29,29,31,.72);--line:rgba(255,255,255,.14);--face:#1d1d1f;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
+
+/* ---------- Global nav ---------- */
+#nav{position:fixed;inset:0 0 auto;height:48px;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:0 max(22px,4vw);font-size:12px;border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+#nav b{font-size:17px;font-weight:600;letter-spacing:-.01em}
+#links{display:flex;gap:28px}
+#links a{color:var(--fg);opacity:.6;text-decoration:none;transition:opacity .2s}
+#links a:hover,#links a.on{opacity:1}
+#bar{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--blue)}
+#theme{width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:var(--fg);cursor:pointer;display:grid;place-items:center}
+#theme:hover{background:var(--line)}
+#theme svg{width:16px;height:16px;grid-area:1/1;transition:opacity .3s,rotate .3s}
+.moon{opacity:0;rotate:90deg}
+:root[data-theme=dark] .sun{opacity:0;rotate:-90deg}
+:root[data-theme=dark] .moon{opacity:1;rotate:0deg}
+
+/* ---------- Cube ---------- */
+#scene{position:fixed;inset:0;z-index:0;display:grid;place-items:center;perspective:1200px;pointer-events:none;
+  background:radial-gradient(circle at 50% 52%,color-mix(in srgb,var(--blue) 12%,transparent),transparent 55%)}
+#cube{--s:min(70vw,70vh,520px);width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;transform:rotateX(90deg);will-change:transform}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;display:grid;place-items:center;background:var(--face)}
+.face span{font-size:clamp(2rem,8vw,4rem);font-weight:700;letter-spacing:-.04em;color:var(--muted);opacity:.35}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.face[data-face=front]{transform:translateZ(calc(var(--s)/2))}
+.face[data-face=back]{transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.face[data-face=right]{transform:rotateY(90deg) translateZ(calc(var(--s)/2))}
+.face[data-face=left]{transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}
+.face[data-face=top]{transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}
+.face[data-face=bottom]{transform:rotateX(90deg) translateZ(calc(var(--s)/2))}
+
+/* ---------- Sections + cards ---------- */
+#main{position:relative;z-index:1}
+section{min-height:100vh;display:flex;align-items:center;padding:96px max(22px,6vw) 72px}
+section.r .card{margin-left:auto}
+.card{max-width:26rem;padding:2.25rem 2rem;border-radius:28px;border:1px solid var(--line);
+  background:var(--card);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.35);opacity:0;translate:0 24px;transition:opacity .7s ease,translate .7s ease,background .3s}
+.card.in{opacity:1;translate:0 0}
+.eyebrow{font-size:.75rem;font-weight:600;color:var(--tag);letter-spacing:.01em}
+h2{font-size:clamp(2.25rem,5vw,3.5rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin:.5rem 0 .75rem}
+.card p{font-size:1.05rem;line-height:1.4;color:var(--muted)}
+.price{margin-top:.9rem;font-size:.9rem;color:var(--muted)}
+.btns{display:flex;align-items:center;gap:1.25rem;margin-top:1.4rem}
+.pill{background:var(--blue);color:#fff;border-radius:980px;padding:.6rem 1.25rem;font-size:.9rem;text-decoration:none;transition:background .2s}
+.pill:hover{background:var(--blue-h)}
+.more{color:var(--blue);font-size:.95rem;text-decoration:none}
+.more::after{content:" \203A"}
+.more:hover{text-decoration:underline}
+
+/* ---------- Caption ---------- */
+#cap{position:fixed;bottom:22px;left:50%;translate:-50% 0;z-index:5;text-align:center;pointer-events:none;font-size:.75rem;color:var(--muted)}
+#cap strong{display:block;font-size:1.05rem;font-weight:600;color:var(--fg);margin-top:2px}
+
+@media (max-width:800px){
+  #links,#cap{display:none}
+  #scene{place-items:start center;padding-top:15vh}
+  #cube{--s:min(64vw,40vh)}
+  section{align-items:flex-end;padding:96px 18px 28px}
+  .card{max-width:100%;padding:1.5rem 1.25rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <b id="brand"></b>
+  <div id="links"></div>
+  <button id="theme" aria-label="Toggle light/dark mode">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+  <div id="bar"></div>
+</nav>
+
+<div id="scene"><div id="cube"></div></div>
+<main id="main"></main>
+<div id="cap"><span id="cap_n">01</span><strong id="cap_name"></strong></div>
+
+<script>
+/* =====================================================================
+   EDIT HERE: your brand and your gallery.
+   Each item shows on one cube face and gets its own scroll section.
+   The cube has 6 faces, so use 6 items (top, front, right, back, left, bottom).
+   src   = your image path or URL (square images work best; leave "" for a placeholder)
+   ===================================================================== */
+const BRAND = "Store";
+
+const GALLERY = [
+  { src:"https://picsum.photos/seed/cube1/900/900", name:"Aurora",  tag:"New",         title:"Aurora.",  text:"A short line that explains this item. Keep it to two or three sentences.", price:"From $999", buy:"#", more:"#" },
+  { src:"https://picsum.photos/seed/cube2/900/900", name:"Nimbus",  tag:"Bestseller",  title:"Nimbus.",  text:"Describe what makes this one different from the rest of the collection.",   price:"From $799", buy:"#", more:"#" },
+  { src:"https://picsum.photos/seed/cube3/900/900", name:"Ember",   tag:"New",         title:"Ember.",   text:"Swap this text, the image and the links with your own content.",            price:"From $599", buy:"#", more:"#" },
+  { src:"https://picsum.photos/seed/cube4/900/900", name:"Tide",    tag:"Limited",     title:"Tide.",    text:"Every card is generated from this list, so you never touch the HTML.",     price:"From $499", buy:"#", more:"#" },
+  { src:"https://picsum.photos/seed/cube5/900/900", name:"Solstice",tag:"New",         title:"Solstice.",text:"Add a price, or delete the price field to hide that line.",                 price:"From $399", buy:"#", more:"#" },
+  { src:"https://picsum.photos/seed/cube6/900/900", name:"Zenith",  tag:"Pro",         title:"Zenith.",  text:"The last face of the cube. Scroll back up to spin it the other way.",       price:"From $299", buy:"#", more:"#" }
+];
+/* ===================================================================== */
+
+const $ = s => document.querySelector(s);
+const G = GALLERY.slice(0, 6), N = G.length;
+const FACES = ["top","front","right","back","left","bottom"];
+const STOPS = [{rx:90,ry:0},{rx:0,ry:0},{rx:0,ry:-90},{rx:0,ry:-180},{rx:0,ry:-270},{rx:-90,ry:-360}];
+
+// Build the page from the GALLERY list
+$('#brand').textContent = BRAND;
+$('#links').innerHTML = G.map((g,i) => `<a href="#s${i}">${g.name}</a>`).join('');
+$('#cube').innerHTML = FACES.map((f,i) => {
+  const g = G[i];
+  return `<div class="face" data-face="${f}"><span>${g ? g.name : ''}</span>${g && g.src ? `<img src="${g.src}" alt="${g.name}" onerror="this.remove()">` : ''}</div>`;
+}).join('');
+$('#main').innerHTML = G.map((g,i) => `
+  <section id="s${i}" class="${i % 2 ? 'r' : ''}">
+    <div class="card">
+      <div class="eyebrow">${g.tag || ''}</div>
+      <h2>${g.title || g.name}</h2>
+      <p>${g.text || ''}</p>
+      ${g.price ? `<div class="price">${g.price}</div>` : ''}
+      <div class="btns"><a class="pill" href="${g.buy || '#'}">Buy</a><a class="more" href="${g.more || '#'}">Learn more</a></div>
+    </div>
+  </section>`).join('');
+
+const cube = $('#cube'), bar = $('#bar');
+const navLinks = [...document.querySelectorAll('#links a')];
+const sections = [...document.querySelectorAll('section')];
+
+// Theme (follows the system, toggle in the nav)
+const root = document.documentElement, mq = matchMedia('(prefers-color-scheme: dark)');
+const setTheme = t => root.dataset.theme = t;
+setTheme(mq.matches ? 'dark' : 'light');
+mq.addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'));
+$('#theme').onclick = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+
+// Reveal cards as they scroll into view
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold: .15 });
+document.querySelectorAll('.card').forEach(c => io.observe(c));
+
+// Scroll-driven cube
+let maxS = 1, tops = [], tgt = 0, sm = 0, active = -1;
+const measure = () => {
+  maxS = Math.max(1, root.scrollHeight - innerHeight);
+  tops = sections.map(s => s.getBoundingClientRect().top + scrollY);
+};
+measure();
+addEventListener('resize', measure);
+new ResizeObserver(measure).observe(root);
+
+const ease = t => t < .5 ? 2*t*t : -1 + (4 - 2*t)*t;
+function draw() {
+  if (N < 2) return;
+  const t = sm * (N - 1), i = Math.min(Math.floor(t), N - 2), f = ease(t - i);
+  const a = STOPS[i], b = STOPS[i + 1];
+  cube.style.transform = `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${a.ry + (b.ry - a.ry) * f}deg)`;
+}
+function hud() {
+  bar.style.width = (sm * 100) + '%';
+  const mid = scrollY + innerHeight * .5;
+  let idx = 0;
+  tops.forEach((y, i) => { if (mid >= y) idx = i; });
+  if (idx === active) return;
+  active = idx;
+  $('#cap_n').textContent = String(idx + 1).padStart(2, '0');
+  $('#cap_name').textContent = G[idx].name;
+  navLinks.forEach((a, i) => a.classList.toggle('on', i === idx));
+}
+
+let last = performance.now();
+(function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((now - last) / 1000, .05); last = now;
+  tgt = Math.min(1, Math.max(0, scrollY / maxS));
+  sm += (tgt - sm) * (1 - Math.exp(-dt * 8));
+  draw(); hud();
+})(last);
+</script>
+</body>
+</html>

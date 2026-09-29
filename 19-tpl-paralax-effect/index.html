@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<title>Parallax Utility (copy-paste)</title>
+
+<!-- ============ START COPY: paste into your CSS file or a <style> tag ============ -->
+<style>
+/*
+  USAGE
+  <section class="parallax" style="--parallax-img:url('photo.jpg')">
+    <div class="parallax__box">Any text or content (optional)</div>
+  </section>
+
+  Alignment : add parallax--left | parallax--right | parallax--center
+  Options   : set on the element with style="" or in your own CSS
+              --parallax-img      background image (required)
+              --parallax-h        band height          (default 60vh)
+              --parallax-pos      focus point          (default center)
+              --parallax-overlay  dark tint over photo (default none)
+  It works on iOS too and never touches your other sections.
+*/
+.parallax{
+  --parallax-h:60vh;
+  --parallax-pos:center;
+  --parallax-overlay:transparent;
+
+  position:relative;
+  isolation:isolate;
+  clip-path:inset(0);                 /* the band acts as a window onto the fixed image */
+  min-height:var(--parallax-h);
+  display:flex;align-items:center;
+  padding:3rem max(20px,6vw);
+}
+.parallax::before{
+  content:"";
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--parallax-overlay),var(--parallax-overlay)),var(--parallax-img);
+  background-size:cover;
+  background-position:var(--parallax-pos);
+  background-repeat:no-repeat;
+}
+.parallax--left{justify-content:flex-start}
+.parallax--right{justify-content:flex-end}
+.parallax--center{justify-content:center;text-align:center}
+
+/* Optional caption box that sits on top of the photo */
+.parallax__box{
+  max-width:32rem;padding:1rem 1.5rem;
+  color:#fff;font-size:clamp(1.5rem,4vw,2.75rem);line-height:1.2;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+</style>
+<!-- ============ END COPY ============ -->
+
+<!-- Demo page styles only (NOT part of the utility) -->
+<style>
+body{margin:0;font-family:system-ui,sans-serif;color:#222;background:#fff}
+.block{max-width:44rem;margin:0 auto;padding:4rem 24px;line-height:1.7}
+.block h2{margin-bottom:.75rem}
+</style>
+</head>
+<body>
+
+<div class="block">
+  <h2>Your content</h2>
+  <p>Any normal section. The bands below show a photo that stays put while the page scrolls past it.</p>
+</div>
+
+<section class="parallax parallax--right" style="--parallax-img:url('https://picsum.photos/seed/par1/1920/1200');--parallax-h:70vh">
+  <div class="parallax__box">Live. Laugh. Love.</div>
+</section>
+
+<div class="block">
+  <h2>More content</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Audeo dicere, inquit. Bonum liberi: misera orbitas. Paria sunt igitur. Duo Reges: constructio interrete.</p>
+  <p>Quis istud possit, inquit, negare? Erat enim Polemonis. Quid sequatur, quid repugnet, vident.</p>
+</div>
+
+<section class="parallax parallax--left" style="--parallax-img:url('https://picsum.photos/seed/par2/1920/1200');--parallax-overlay:rgba(0,0,0,.2)">
+  <div class="parallax__box">Happiness</div>
+</section>
+
+<div class="block">
+  <h2>Another block</h2>
+  <p>Comprehensum, quod cognitum non habet? Sint ista Graecorum; Quantum Aristoxeni ingenium consumptum videmus in musicis? Sequitur disserendi ratio cognitioque naturae.</p>
+</div>
+
+<section class="parallax parallax--center" style="--parallax-img:url('https://picsum.photos/seed/par3/1920/1200')">
+  <div class="parallax__box">The end</div>
+</section>
+
+</body>
+</html>

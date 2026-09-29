@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charles</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:#FED75A;overflow:hidden}
+
+  /* ===================== Charles LOGO (copy CSS from here) ===================== */
+  .Charles{display:flex;align-items:center;justify-content:center;height:100vh;width:100vw}
+  .Charles svg{padding:5vw;width:90vw;overflow:visible}
+  .Charles svg > *{fill:#1C1C1C;stroke:#1C1C1C;stroke-width:.85px;stroke-linejoin:round}
+
+  /* hover tip (optional, delete if you don't want it) */
+  body:hover:after{
+    content:"Hover to Slow Motion";position:absolute;left:0;right:0;bottom:1vh;
+    color:#1C1C1C;text-align:center;text-transform:uppercase;letter-spacing:.5px;
+    font:700 9px/14px Tahoma,sans-serif;animation:tip 2.5s forwards}
+  @keyframes tip{0%,100%{opacity:0}10%,80%{opacity:1}}
+  /* ===================== (copy CSS to here) ===================== */
+</style>
+</head>
+<body>
+
+<!-- ===================== Charles LOGO (copy HTML from here) ===================== -->
+<figure class="Charles">
+<svg viewBox="0 0 883 105" xml:space="preserve" role="img" aria-label="Charles">
+<polygon points="112,0 22,0 42,28"/>
+<polygon points="112,0 42,28 100,28"/>
+<polygon points="22,0 0,22 42,28"/>
+<polygon points="0,22 28,42 42,28"/>
+<polygon points="0,22 0,83 28,63"/>
+<polygon points="0,22 28,63 28,42"/>
+<polygon points="0,83 22,105 28,63"/>
+<polygon points="22,105 42,77 28,63"/>
+<polygon points="22,105 112,105 100,77"/>
+<polygon points="22,105 100,77 42,77"/>
+<polygon points="128,0 156,0 128,52"/>
+<polygon points="156,0 156,38 128,52"/>
+<polygon points="128,52 156,38 156,66"/>
+<polygon points="128,52 156,66 128,105"/>
+<polygon points="156,66 156,105 128,105"/>
+<polygon points="243,0 215,0 243,52"/>
+<polygon points="215,0 215,38 243,52"/>
+<polygon points="243,52 215,38 215,66"/>
+<polygon points="243,52 215,66 243,105"/>
+<polygon points="215,66 215,105 243,105"/>
+<polygon points="156,38 186,38 156,66"/>
+<polygon points="186,38 186,66 156,66"/>
+<polygon points="186,38 215,38 215,66 186,66"/>
+<polygon points="294,0 313.5,23.5 269.4,68"/>
+<polygon points="313.5,23.5 297.4,68 269.4,68"/>
+<polygon points="269.4,68 297.4,68 262.2,88"/>
+<polygon points="297.4,68 290.2,88 262.2,88"/>
+<polygon points="262.2,88 290.2,88 256,105"/>
+<polygon points="290.2,88 284,105 256,105"/>
+<polygon points="333,0 313.5,23.5 357.6,68"/>
+<polygon points="313.5,23.5 329.6,68 357.6,68"/>
+<polygon points="357.6,68 329.6,68 364.8,88"/>
+<polygon points="329.6,68 336.8,88 364.8,88"/>
+<polygon points="364.8,88 336.8,88 371,105"/>
+<polygon points="336.8,88 343,105 371,105"/>
+<polygon points="294,0 333,0 313.5,23.5"/>
+<polygon points="297.4,68 329.6,68 290.2,88"/>
+<polygon points="329.6,68 336.8,88 290.2,88"/>
+<polygon points="384,0 412,0 384,50"/>
+<polygon points="412,0 412,28 384,50"/>
+<polygon points="412,28 412,38 384,50"/>
+<polygon points="412,38 412,66 384,50"/>
+<polygon points="412,66 412,105 384,50"/>
+<polygon points="384,50 412,105 384,105"/>
+<polygon points="412,0 441.5,0 412,28"/>
+<polygon points="441.5,0 441.5,28 412,28"/>
+<polygon points="441.5,0 471,0 471,28 441.5,28"/>
+<polygon points="412,38 438.6,38 412,66"/>
+<polygon points="438.6,38 438.6,66 412,66"/>
+<polygon points="438.6,38 471,38 471,66 438.6,66"/>
+<polygon points="471,33 471,0 477,0"/>
+<polygon points="471,33 477,0 499,22"/>
+<polygon points="471,33 499,22 499,44"/>
+<polygon points="471,33 499,44 477,66"/>
+<polygon points="471,33 477,66 471,66"/>
+<polygon points="444,66 474,66 471,105"/>
+<polygon points="474,66 499,105 471,105"/>
+<polygon points="512,0 540,0 512,50"/>
+<polygon points="540,0 540,77 512,50"/>
+<polygon points="512,50 540,77 512,105"/>
+<polygon points="540,77 540,105 512,105"/>
+<polygon points="540,77 580,77 540,105"/>
+<polygon points="580,77 580,105 540,105"/>
+<polygon points="580,77 620,77 620,105 580,105"/>
+<polygon points="640,0 668,0 640,52"/>
+<polygon points="668,0 668,28 640,52"/>
+<polygon points="668,28 668,38 640,52"/>
+<polygon points="668,38 668,66 640,52"/>
+<polygon points="668,66 668,77 640,52"/>
+<polygon points="668,77 668,105 640,52"/>
+<polygon points="640,52 668,105 640,105"/>
+<polygon points="668,0 709,0 668,28"/>
+<polygon points="709,0 709,28 668,28"/>
+<polygon points="709,0 750,0 750,28 709,28"/>
+<polygon points="668,38 696.8,38 668,66"/>
+<polygon points="696.8,38 696.8,66 668,66"/>
+<polygon points="696.8,38 740,38 740,66 696.8,66"/>
+<polygon points="668,77 717.2,77 668,105"/>
+<polygon points="717.2,77 717.2,105 668,105"/>
+<polygon points="717.2,77 750,77 750,105 717.2,105"/>
+<polygon points="796,0 838,0 796,28"/>
+<polygon points="838,0 838,28 796,28"/>
+<polygon points="838,0 880,0 870,28 838,28"/>
+<polygon points="796,28 796,0 790,0"/>
+<polygon points="796,28 790,0 768,22"/>
+<polygon points="796,28 768,22 768,28"/>
+<polygon points="768,28 796,28 768,48"/>
+<polygon points="796,28 796,66 768,48"/>
+<polygon points="768,48 796,66 768,66"/>
+<polygon points="796,38 825.5,38 796,66"/>
+<polygon points="825.5,38 825.5,66 796,66"/>
+<polygon points="825.5,38 855,38 855,66 825.5,66"/>
+<polygon points="855,38 883,38 883,60"/>
+<polygon points="855,38 883,60 855,77"/>
+<polygon points="883,60 883,77 855,77"/>
+<polygon points="855,77 883,77 883,83"/>
+<polygon points="855,77 883,83 861,105"/>
+<polygon points="855,77 861,105 855,105"/>
+<polygon points="855,105 811.5,105 855,77"/>
+<polygon points="811.5,105 811.5,77 855,77"/>
+<polygon points="811.5,105 768,105 778,77 811.5,77"/>
+</svg>
+</figure>
+<!-- ===================== (copy HTML to here) ===================== -->
+
+<!-- ===================== ANIMATION (copy from here) ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(() => {
+  const svg   = document.querySelector('.Charles svg');
+  const parts = gsap.utils.toArray('.Charles svg > *');
+  const rand  = (min, max) => Math.random() * (max - min) + min;
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;   // static logo
+
+  // scatter every piece
+  parts.forEach(el => gsap.set(el, {
+    x: rand(-500, 500), y: rand(-500, 500), rotation: rand(-720, 720),
+    scale: 0, opacity: 0, transformOrigin: '50% 50%'
+  }));
+
+  // fly them together
+  const tl = gsap.timeline();
+  tl.to(parts, {
+    x: 0, y: 0, opacity: 1, scale: 1, rotation: 0,
+    ease: 'power4.inOut', duration: 0.75, stagger: 0.0125
+  });
+
+  // slow motion on hover
+  svg.addEventListener('mouseenter', () => tl.timeScale(0.15));
+  svg.addEventListener('mouseleave', () => tl.timeScale(1));
+})();
+</script>
+<!-- ===================== (copy to here) ===================== -->
+
+</body>
+</html>

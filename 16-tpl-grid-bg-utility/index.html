@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<title>Grid Background Utility (copy-paste)</title>
+
+<!-- ============ START COPY: paste into your CSS file or a <style> tag ============ -->
+<style>
+/*
+  USAGE
+  Section :  <section class="grid-bg" style="min-height:100vh"> ...your content... </section>
+  Card    :  <div class="grid-bg" style="border-radius:20px;min-height:220px"> ... </div>
+  Body    :  <body class="grid-bg grid-bg--fixed"> ... </body>
+  Theme   :  add a preset (grid-bg--ocean) or override the --grid-* variables on any element.
+  Your content needs no extra z-index or wrapper. It sits above the grid automatically.
+*/
+.grid-bg{
+  --grid-size:40px;                       /* size of each square */
+  --grid-line:rgba(255,255,255,.2);       /* line color */
+  --grid-tilt:50deg;                      /* floor angle */
+  --grid-depth:800px;                     /* perspective strength (lower = more dramatic) */
+  --grid-speed:5s;                        /* time for one square to pass */
+  --grid-gradient:linear-gradient(to top,#0f0209,#23061d,#330531,#3e024b,#41056a,#520578,#640385,#770092,#9b0089,#b8007e,#ce1173,#e03168);
+
+  position:relative;
+  isolation:isolate;                      /* keeps the grid layer inside this element */
+  overflow:hidden;
+  background-image:var(--grid-gradient);
+}
+.grid-bg::before{
+  content:"";
+  position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-size:var(--grid-size) var(--grid-size);
+  background-image:
+    linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+  /* Tilts the grid back from its top edge, with the vanishing point at the middle.
+     This is done with transforms, so it never becomes a containing block for your content. */
+  transform:perspective(var(--grid-depth)) translateY(-50%) rotateX(var(--grid-tilt)) translateY(50%);
+  animation:grid-bg-crawl var(--grid-speed) linear infinite;
+}
+@keyframes grid-bg-crawl{
+  to{background-position-y:var(--grid-size)}   /* exactly one square = seamless loop */
+}
+
+/* Page-wide version: use on <body>. The grid stays fixed while the page scrolls. */
+.grid-bg--fixed{overflow:visible;min-height:100vh;background-attachment:fixed}
+.grid-bg--fixed::before{position:fixed}
+
+/* Optional color preset */
+.grid-bg--ocean{
+  --grid-line:rgba(160,230,255,.22);
+  --grid-gradient:linear-gradient(to top,#02060f,#04162e,#052b55,#0a4a86,#1176b8,#25a4d6);
+}
+</style>
+<!-- ============ END COPY ============ -->
+
+<!-- Demo page styles only (NOT part of the utility) -->
+<style>
+body{margin:0;font-family:system-ui,sans-serif;color:#fff}
+.hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
+.hero h1{font-size:clamp(2rem,6vw,4rem)}
+.band{min-height:60vh;display:grid;place-items:center;text-align:center;padding:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding:40px 24px;max-width:900px;margin:0 auto}
+.card{border-radius:20px;min-height:220px;padding:24px;border:1px solid rgba(255,255,255,.15)}
+</style>
+</head>
+
+<body class="grid-bg grid-bg--fixed">
+
+  <main class="hero">
+    <div>
+      <h1>Body background</h1>
+      <p>class="grid-bg grid-bg--fixed" on the body</p>
+    </div>
+  </main>
+
+  <section class="grid-bg grid-bg--ocean band">
+    <div>
+      <h2>Section background</h2>
+      <p>class="grid-bg grid-bg--ocean"</p>
+    </div>
+  </section>
+
+  <div class="cards">
+    <article class="grid-bg card">
+      <h3>Card</h3>
+      <p>Same class, default colors.</p>
+    </article>
+    <article class="grid-bg grid-bg--ocean card" style="--grid-size:24px;--grid-speed:3s">
+      <h3>Card, custom</h3>
+      <p>Smaller squares and faster speed via variables.</p>
+    </article>
+  </div>
+
+</body>
+</html>

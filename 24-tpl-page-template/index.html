@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Error Page Templates</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#e5e7eb;font-family:Verdana,Geneva,sans-serif;background:radial-gradient(circle at 20% 0,#1e2a5a 0,#0b1020 45%,#070a14 100%) fixed}
+.wrap{max-width:1080px;margin:0 auto;padding:56px 20px 72px}
+header{text-align:center;margin-bottom:32px}
+.eyebrow{display:inline-block;padding:4px 12px;border:1px solid #2b3560;border-radius:999px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9aa6d8}
+h1{margin:16px 0 10px;font-size:clamp(30px,6vw,48px);line-height:1.1;color:#fff}
+h1 em{font-style:normal;background:linear-gradient(90deg,#8a96ff,#ffc371);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{margin:0 auto;max-width:480px;color:#8f9bc7;line-height:1.6}
+.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 32px}
+.filters button{padding:7px 16px;border:1px solid #2b3560;border-radius:999px;background:transparent;color:#c7cef2;font:inherit;font-size:13px;cursor:pointer;transition:.2s}
+.filters button:hover{border-color:#8a96ff;color:#fff}
+.filters button.on{background:#8a96ff;border-color:#8a96ff;color:#0b1020;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:24px}
+.card{display:flex;flex-direction:column;overflow:hidden;border:1px solid #232c55;border-radius:16px;background:#0f1530;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-6px);border-color:var(--a);box-shadow:0 18px 40px -18px var(--a)}
+.cover{position:relative;padding:28px 24px 22px;background:var(--g)}
+.cover span{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(0,0,0,.28);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.cover h2{margin:14px 0 0;font-size:28px;color:#fff}
+.body{display:flex;flex-direction:column;flex:1;padding:20px 20px 22px}
+.body p{margin:0 0 16px;font-size:14px;line-height:1.5;color:#8f9bc7}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.tile{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid #232c55;border-radius:10px;background:#141b3d;color:#e5e7eb;text-decoration:none;transition:.2s}
+.tile b{font-size:22px;color:var(--b)}
+.tile span{font-size:12px;color:#8f9bc7}
+.tile:hover{background:var(--a);border-color:var(--a);transform:translateY(-2px)}
+.tile:hover b,.tile:hover span{color:#fff}
+.tile.hide{display:none}
+.home{margin-top:auto;font-size:14px;color:var(--b);text-decoration:none}
+.home i{display:inline-block;font-style:normal;transition:transform .2s}
+.home:hover i{transform:translateX(5px)}
+.empty{display:none;text-align:center;margin-top:24px;color:#8f9bc7}
+footer{margin-top:48px;text-align:center;font-size:12px;color:#5d6796}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Template Pack</span>
+    <h1>Error page <em>templates</em></h1>
+    <p>Choose a style, then open the error page you need. Filter by status code to compare styles.</p>
+  </header>
+
+  <div class="filters"><button class="on" data-f="all">All</button><button data-f="400">400</button><button data-f="403">403</button><button data-f="404">404</button><button data-f="408">408</button><button data-f="410">410</button></div>
+
+  <main class="grid">
+    <article class="card" style="--a:#4353ff;--b:#b4baff;--g:linear-gradient(135deg,#4353ff,#8a96ff)">
+      <div class="cover"><span>4 pages</span><h2>Isometric</h2></div>
+      <div class="body">
+        <p>Clean blue isometric dashboard illustration.</p>
+        <div class="tiles">
+          <a class="tile" data-code="403" href="pages/isometric/403-isometric.html"><b>403</b><span>Forbidden</span></a>
+          <a class="tile" data-code="404" href="pages/isometric/404-isometric.html"><b>404</b><span>Not Found</span></a>
+          <a class="tile" data-code="408" href="pages/isometric/408-isometric.html"><b>408</b><span>Request Timeout</span></a>
+          <a class="tile" data-code="410" href="pages/isometric/410-isometric.html"><b>410</b><span>Gone</span></a>
+        </div>
+        <a class="home" href="pages/isometric/isometric.html">View Isometric overview <i>&rarr;</i></a>
+      </div>
+    </article>
+    <article class="card" style="--a:#ff7a18;--b:#ffc371;--g:linear-gradient(135deg,#ff7a18,#7b2ff7)">
+      <div class="cover"><span>4 pages</span><h2>Halloween</h2></div>
+      <div class="body">
+        <p>Spooky seasonal error pages.</p>
+        <div class="tiles">
+          <a class="tile" data-code="403" href="pages/halloween/403-halloween.html"><b>403</b><span>Forbidden</span></a>
+          <a class="tile" data-code="404" href="pages/halloween/404-halloween.html"><b>404</b><span>Not Found</span></a>
+          <a class="tile" data-code="408" href="pages/halloween/408-halloween.html"><b>408</b><span>Request Timeout</span></a>
+          <a class="tile" data-code="410" href="pages/halloween/410-halloween.html"><b>410</b><span>Gone</span></a>
+        </div>
+        <a class="home" href="pages/halloween/halloween.html">View Halloween overview <i>&rarr;</i></a>
+      </div>
+    </article>
+    <article class="card" style="--a:#26c6da;--b:#80deea;--g:linear-gradient(135deg,#26c6da,#333366)">
+      <div class="cover"><span>5 pages</span><h2>Weather</h2></div>
+      <div class="body">
+        <p>Rainy Statue of Liberty night scene.</p>
+        <div class="tiles">
+          <a class="tile" data-code="400" href="pages/weather/400-weather.html"><b>400</b><span>Bad Request</span></a>
+          <a class="tile" data-code="403" href="pages/weather/403-weather.html"><b>403</b><span>Forbidden</span></a>
+          <a class="tile" data-code="404" href="pages/weather/404-weather.html"><b>404</b><span>Not Found</span></a>
+          <a class="tile" data-code="408" href="pages/weather/408-weather.html"><b>408</b><span>Request Timeout</span></a>
+          <a class="tile" data-code="410" href="pages/weather/410-weather.html"><b>410</b><span>Gone</span></a>
+        </div>
+        <a class="home" href="pages/weather/weather.html">View Weather overview <i>&rarr;</i></a>
+      </div>
+    </article>
+  </main>
+  <p class="empty" id="empty">No pages for that code.</p>
+  <footer>3 styles &middot; 5 status codes</footer>
+</div>
+<script>
+const btns=document.querySelectorAll('.filters button'),tiles=document.querySelectorAll('.tile'),cards=document.querySelectorAll('.card');
+btns.forEach(b=>b.onclick=()=>{
+  btns.forEach(x=>x.classList.toggle('on',x===b));
+  const f=b.dataset.f;
+  tiles.forEach(t=>t.classList.toggle('hide',f!=='all'&&t.dataset.code!==f));
+  let any=false;
+  cards.forEach(c=>{const has=!!c.querySelector('.tile:not(.hide)');c.style.display=has?'':'none';any=any||has});
+  document.getElementById('empty').style.display=any?'none':'block';
+});
+</script>
+</body>
+</html>

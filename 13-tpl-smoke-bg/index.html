@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<title>Purple Smoke</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{min-height:100vh;background:#05000a}
+</style>
+</head>
+
+<!--
+  USAGE: add the data-smoke attribute to ANY element (body, a card, a hero, a section...).
+  The smoke fills that element and sits behind its content automatically.
+
+    <body data-smoke>                       -> full-page fixed background
+    <div class="card" data-smoke>...</div>  -> smoke inside a card (follows its border-radius)
+
+  OPTIONS (all optional, set as attributes on the same element):
+    data-smoke-deep="#0f0024"   shadow color
+    data-smoke-mid="#6b0d9e"    body color
+    data-smoke-glow="#f21a99"   highlight color
+    data-smoke-speed="1"        animation speed
+    data-smoke-density="1"      smoke thickness
+    data-smoke-height="0.85"    how far up it reaches (0 to 1)
+    data-smoke-scale="0.6"      render resolution (lower = faster)
+
+  TO COPY: take the <script> block at the bottom. Nothing else is required.
+-->
+
+<body data-smoke>
+
+<!-- ===================== PURPLE SMOKE (copy from here) ===================== -->
+<script src="js/script.js"></script>
+<!-- ===================== PURPLE SMOKE (copy to here) ===================== -->
+
+</body>
+</html>

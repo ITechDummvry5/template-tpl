@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spiral Gallery</title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden}
+</style>
+</head>
+
+<!--
+  USAGE: add the data-spiral attribute to ANY element (body, a card, a hero, a section...).
+  The spiral fills that element and sits behind its content automatically.
+
+    <body data-spiral>                        -> full-page fixed spiral
+    <div class="card" data-spiral>...</div>   -> spiral inside a card (give the card a height)
+
+  IMAGES: add your URLs to the IMAGES array in the script below.
+  To use different images on one element, set them as an attribute instead
+  (separated by commas or new lines):
+    <div data-spiral data-spiral-images="a.jpg, b.jpg, c.jpg"></div>
+
+  OPTIONAL attributes:
+    data-spiral-bg="#000000"    background color behind the spiral
+
+  CONTROLS: mouse wheel / one-finger swipe = spin, drag / two-finger drag = tilt, arrow keys left/right = zoom.
+
+  TO COPY: take the two <script> blocks at the bottom (three.js CDN + the spiral script).
+-->
+
+<body data-spiral>
+
+<!-- ===================== SPIRAL GALLERY (copy from here) ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  /* ---------- ADD YOUR IMAGES HERE ---------- */
+  const IMAGES = [
+    // 'https://example.com/photo-1.jpg',
+    // 'https://example.com/photo-2.jpg',
+    // 'https://example.com/photo-3.jpg',
+        'img/Ane no Tomodachi.jpg',
+        'img/Cigarette & Cherry.png',
+        'img/Medaka Kuroiwa is Impervious to My Charms.jpg',
+        'img/My New Girlfriend Is Not Human.jpg',
+        'img/Ouji-sama no Tomodachi.png',
+  ];
+  /* ------------------------------------------ */
+
+  const INERTIA = { friction: .94, strength: .8, maxSpeed: .05, directionSmoothing: .92, scrollSensitivity: .0008 };
+
+  function mount(el) {
+    if (el.__spiral) return;
+    el.__spiral = true;
+
+    const urls = (el.dataset.spiralImages ? el.dataset.spiralImages.split(/[\s,]+/) : IMAGES).filter(Boolean);
+    if (!urls.length) { console.warn('Spiral: add image URLs to the IMAGES array.'); return; }
+    const N = urls.length;
+
+    const isRoot = el === document.body || el === document.documentElement;
+    const target = isRoot ? window : el;
+
+    const cv = document.createElement('canvas');
+    cv.setAttribute('aria-hidden', 'true');
+    cv.style.cssText = `position:${isRoot ? 'fixed' : 'absolute'};inset:0;width:100%;height:100%;` +
+      'z-index:-1;display:block;outline:none;cursor:grab;border-radius:inherit';
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.style.isolation = 'isolate';
+    if (!isRoot) el.style.overflow = el.style.overflow || 'hidden';
+    el.prepend(cv);
+
+    const size = () => isRoot
+      ? { w: innerWidth, h: innerHeight }
+      : { w: Math.max(1, el.clientWidth), h: Math.max(1, el.clientHeight) };
+
+    /* ---------- scene (same layout as the original) ---------- */
+    const config = {
+      imageHeight: 7, curvature: -0.030, gapSize: 0, spiralRadius: 3.5,
+      spiralTurns: Math.max(1, 2.8 + (N - 21) * 0.1),
+      spiralHeight: Math.max(6, 12 + (N - 21) * 0.25),
+      centerX: -2, centerY: 4.38, centerZ: 0
+    };
+
+    let s0 = size();
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(el.dataset.spiralBg || '#000000');
+    const camera = new THREE.PerspectiveCamera(50, s0.w / s0.h, 0.1, 1000);
+    camera.position.set(0, 3.5, 9);
+    const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.setSize(s0.w, s0.h, false);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const light = new THREE.DirectionalLight(0xffffff, 0.9);
+    light.position.set(5, 8, 5);
+    scene.add(light);
+
+    const baseRotation = { x: -0.18, z: 0.12 };
+    const dragRotation = { x: 0, z: 0 };
+    const tiltGroup = new THREE.Group();
+    tiltGroup.rotation.set(baseRotation.x, 0, baseRotation.z);
+    scene.add(tiltGroup);
+
+    let spiralMesh, shaderMaterial, scrollOffset = 0;
+
+    /* ---------- master texture: all images side by side ---------- */
+    function createTexture() {
+      return new Promise(resolve => {
+        const BASE_H = 500;
+        const ratios = new Array(N).fill(0.8);
+        const imgs = new Array(N).fill(null);
+        let done = 0;
+
+        const finish = () => {
+          const total = ratios.reduce((a, r) => a + r * BASE_H, 0);
+          const k = Math.min(1, renderer.capabilities.maxTextureSize / total);   // stay under GPU limit
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.floor(total * k));
+          c.height = Math.max(1, Math.floor(BASE_H * k));
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, c.width, c.height);
+          let x = 0;
+          ratios.forEach((r, i) => {
+            const w = r * BASE_H * k;
+            if (imgs[i]) ctx.drawImage(imgs[i], x, 0, w, c.height);
+            x += w;
+          });
+          const tex = new THREE.CanvasTexture(c);
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.wrapT = THREE.ClampToEdgeWrapping;
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.generateMipmaps = false;
+          resolve({ tex, ratios });
+        };
+
+        urls.forEach((url, i) => {
+          const img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = () => { ratios[i] = img.naturalWidth / img.naturalHeight; imgs[i] = img; if (++done === N) finish(); };
+          img.onerror = () => { if (++done === N) finish(); };   // failed image = black slot
+          img.src = url;
+        });
+      });
+    }
+
+    /* ---------- spiral geometry ---------- */
+    function buildGeometry(ratios) {
+      const widths = ratios.map(r => r * config.imageHeight);
+      const totalWidth = widths.reduce((a, b) => a + b, 0);
+      const geo = new THREE.PlaneGeometry(totalWidth, config.imageHeight, 200 + N * 20, 24);
+      const pos = geo.attributes.position;
+      const uvs = geo.attributes.uv;
+
+      const origX = [], origY = [];
+      for (let i = 0; i < pos.count; i++) { origX.push(pos.getX(i)); origY.push(pos.getY(i)); }
+
+      const cum = [0];
+      for (let i = 0; i < N; i++) cum.push(cum[i] + widths[i] / totalWidth);
+      const imageRatio = 1 - config.gapSize;
+
+      for (let i = 0; i < uvs.count; i++) {
+        const u = Math.max(0, Math.min(0.999999, uvs.getX(i)));
+        let found = false;
+        for (let j = 0; j < N; j++) {
+          if (u >= cum[j] && u < cum[j + 1]) {
+            const localU = (u - cum[j]) / (cum[j + 1] - cum[j]);
+            if (localU > imageRatio) {
+              uvs.setX(i, cum[j + 1] - 0.001);
+            } else {
+              const sU = Math.max(0.001, Math.min(0.999, localU / imageRatio));
+              uvs.setX(i, cum[j] + sU * (cum[j + 1] - cum[j]));
+            }
+            found = true;
+            break;
+          }
+        }
+        if (!found) uvs.setX(i, cum[N] - 0.001);
+      }
+
+      for (let i = 0; i < pos.count; i++) {
+        const t = Math.max(0, Math.min(1, (origX[i] + totalWidth / 2) / totalWidth));
+        const angle = t * Math.PI * 2 * config.spiralTurns;
+        const radius = config.spiralRadius * (1 - t * 0.12);
+        pos.setXYZ(i,
+          Math.sin(angle) * radius,
+          (t - 0.5) * config.spiralHeight + origY[i] * 0.35,
+          Math.cos(angle) * radius);
+      }
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    function setOffset() {
+      let o = scrollOffset % 1;
+      if (o < 0) o += 1;
+      shaderMaterial.uniforms.offset.value = o;
+    }
+
+    /* ---------- interaction ---------- */
+    let targetVelocity = 0, currentVelocity = 0, acceleration = 0;
+    let touchVelocity = 0, touchLastY = 0, isTouching = false;
+    let isDragging = false, prev = { x: 0, y: 0 };
+    let touchDrag = null;
+
+    const applyTilt = () => {
+      dragRotation.x = Math.max(-0.35, Math.min(0.35, dragRotation.x));
+      dragRotation.z = Math.max(-0.35, Math.min(0.35, dragRotation.z));
+      tiltGroup.rotation.x = baseRotation.x + dragRotation.x;
+      tiltGroup.rotation.z = baseRotation.z + dragRotation.z;
+    };
+
+    target.addEventListener('wheel', e => {
+      e.preventDefault();
+      const raw = e.deltaY * INERTIA.scrollSensitivity * INERTIA.strength;
+      let d = raw - acceleration;
+      d = Math.max(-0.015, Math.min(0.015, d));
+      acceleration = Math.max(-0.03, Math.min(0.03, acceleration + d));
+      targetVelocity = targetVelocity * INERTIA.directionSmoothing + acceleration * (1 - INERTIA.directionSmoothing);
+      targetVelocity = Math.max(-INERTIA.maxSpeed, Math.min(INERTIA.maxSpeed, targetVelocity));
+    }, { passive: false });
+
+    target.addEventListener('mousedown', e => {
+      isDragging = true;
+      prev = { x: e.clientX, y: e.clientY };
+      cv.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+    addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      dragRotation.z += (e.clientX - prev.x) * 0.002;
+      dragRotation.x -= (e.clientY - prev.y) * 0.002;
+      applyTilt();
+      prev = { x: e.clientX, y: e.clientY };
+    });
+    addEventListener('mouseup', () => { isDragging = false; cv.style.cursor = 'grab'; });
+
+    target.addEventListener('touchstart', e => {
+      isTouching = true;
+      touchLastY = e.touches[0].clientY;
+      touchVelocity = 0;
+      if (e.touches.length === 2) touchDrag = { x: e.touches[1].clientX, y: e.touches[1].clientY };
+    }, { passive: true });
+
+    target.addEventListener('touchmove', e => {
+      if (!isTouching) return;
+      e.preventDefault();
+      if (touchDrag && e.touches.length === 2) {
+        dragRotation.z += (e.touches[1].clientX - touchDrag.x) * 0.003;
+        dragRotation.x -= (e.touches[1].clientY - touchDrag.y) * 0.003;
+        applyTilt();
+        touchDrag = { x: e.touches[1].clientX, y: e.touches[1].clientY };
+      }
+      const y = e.touches[0].clientY, dy = y - touchLastY;
+      touchVelocity = touchVelocity * 0.7 + dy * INERTIA.scrollSensitivity * INERTIA.strength * 0.5 * 0.3;
+      scrollOffset += dy * INERTIA.scrollSensitivity * INERTIA.strength * 0.8;
+      if (shaderMaterial) setOffset();
+      touchLastY = y;
+    }, { passive: false });
+
+    target.addEventListener('touchend', e => {
+      if (e.touches.length < 2) touchDrag = null;
+      if (e.touches.length) return;
+      isTouching = false;
+      if (Math.abs(touchVelocity) > 0.001) {
+        const m = INERTIA.maxSpeed * 1.5;
+        targetVelocity = Math.max(-m, Math.min(m, touchVelocity * 1.2));
+      }
+      touchVelocity = 0;
+    });
+
+    let zoom = 1;
+    addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      zoom = Math.max(0.84, Math.min(1, zoom + (e.key === 'ArrowRight' ? 0.05 : -0.05)));
+      camera.position.z = 9 / zoom;
+      camera.position.y = 3.5 / zoom;
+    });
+
+    function step() {
+      targetVelocity *= INERTIA.friction;
+      currentVelocity = currentVelocity * 0.85 + targetVelocity * 0.15;
+      if (Math.abs(currentVelocity) > 0.0001) {
+        scrollOffset += currentVelocity;
+        setOffset();
+      } else {
+        currentVelocity = targetVelocity = acceleration = 0;
+      }
+      if (!isTouching) {
+        touchVelocity *= 0.95;
+        if (Math.abs(touchVelocity) > 0.0001) { scrollOffset += touchVelocity * 0.5; setOffset(); }
+        else touchVelocity = 0;
+      }
+    }
+
+    /* ---------- resize + render loop (only while visible) ---------- */
+    const onResize = () => {
+      const s = size();
+      camera.aspect = s.w / s.h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(s.w, s.h, false);
+    };
+    if (isRoot) addEventListener('resize', onResize); else new ResizeObserver(onResize).observe(el);
+
+    let running = false, raf = 0, inView = true;
+    const loop = () => {
+      if (!running) return;
+      raf = requestAnimationFrame(loop);
+      step();
+      renderer.render(scene, camera);
+    };
+    const sync = () => {
+      const want = inView && !document.hidden && !!spiralMesh;
+      if (want && !running) { running = true; loop(); }
+      else if (!want && running) { running = false; cancelAnimationFrame(raf); }
+    };
+    new IntersectionObserver(e => { inView = e[0].isIntersecting; sync(); }).observe(el);
+    document.addEventListener('visibilitychange', sync);
+
+    /* ---------- go ---------- */
+    createTexture().then(({ tex, ratios }) => {
+      shaderMaterial = new THREE.ShaderMaterial({
+        uniforms: { map: { value: tex }, gap: { value: config.gapSize }, offset: { value: 0 } },
+        vertexShader: `
+          varying vec2 vUv;
+          void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+        fragmentShader: `
+          uniform sampler2D map; uniform float offset; varying vec2 vUv;
+          void main(){
+            float u = vUv.x + offset;
+            if (u >= 1.0) u -= 1.0;
+            if (u < 0.0) u += 1.0;
+            gl_FragColor = texture2D(map, vec2(u, vUv.y));
+          }`,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+      spiralMesh = new THREE.Mesh(buildGeometry(ratios), shaderMaterial);
+      spiralMesh.position.set(config.centerX, config.centerY, config.centerZ);
+      spiralMesh.rotation.x = 0.35;
+      tiltGroup.add(spiralMesh);
+      sync();
+    });
+  }
+
+  const init = () => document.querySelectorAll('[data-spiral]').forEach(mount);
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+})();
+</script>
+<!-- ===================== SPIRAL GALLERY (copy to here) ===================== -->
+
+</body>
+</html>

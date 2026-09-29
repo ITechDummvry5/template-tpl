@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient Controller</title>
+<style>
+  html, body { height: 100%; padding: 0; margin: 0; }
+
+  body {
+    background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1350&q=80');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* ===================== GRADIENT (copy CSS from here) ===================== */
+  .gradient {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(at 300px 300px, rgba(159,0,191,.9) 0, #4d4fa7 70%);
+  }
+  /* ===================== (copy CSS to here) ===================== */
+</style>
+</head>
+<body>
+
+<!--
+  USAGE
+    Keep one element with class "gradient" (it's the overlay that follows the cursor).
+    The floating controller is created by the script, so there is no extra HTML.
+    Tune the look with the panel, then press "Copy CSS" to grab the result.
+    To ship without the panel, set SHOW_PANEL to false in the script.
+-->
+
+<!-- ===================== GRADIENT (copy HTML from here) ===================== -->
+<div class="gradient"></div>
+<!-- ===================== (copy HTML to here) ===================== -->
+
+<!-- ===================== GRADIENT + CONTROLLER (copy script from here) ===================== -->
+<script>
+(() => {
+  const SHOW_PANEL = true;
+
+  const g = document.querySelector('.gradient');
+  if (!g) return;
+
+  const DEFAULTS = { c1: '#9f00bf', a: 0.9, c2: '#4d4fa7', stop: 70, follow: true };
+  const s = { ...DEFAULTS, x: 300, y: 300 };
+
+  const rgba = () => {
+    const n = parseInt(s.c1.slice(1), 16);
+    return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${s.a})`;
+  };
+  const css = () => `radial-gradient(at ${Math.round(s.x)}px ${Math.round(s.y)}px, ${rgba()} 0, ${s.c2} ${s.stop}%)`;
+  const paint = () => { g.style.backgroundImage = css(); };
+
+  let panel = null;
+  document.addEventListener('pointermove', e => {
+    if (!s.follow || (panel && panel.contains(e.target))) return;
+    s.x = e.clientX; s.y = e.clientY;
+    paint();
+  });
+  paint();
+
+  if (!SHOW_PANEL) return;
+
+  /* ---------- floating controller ---------- */
+  const style = document.createElement('style');
+  style.textContent = `
+    .gc{position:fixed;right:16px;bottom:16px;width:240px;z-index:2147483000;
+      font:13px/1.3 system-ui,-apple-system,'Segoe UI',sans-serif;color:#f2f2f5;
+      background:rgba(20,18,30,.82);border:1px solid rgba(255,255,255,.16);border-radius:12px;
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.4);user-select:none}
+    .gc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:grab;touch-action:none}
+    .gc-head:active{cursor:grabbing}
+    .gc-title{font-weight:600}
+    .gc-toggle{all:unset;cursor:pointer;width:24px;height:24px;display:grid;place-items:center;border-radius:6px}
+    .gc-toggle:hover{background:rgba(255,255,255,.12)}
+    .gc-toggle:focus-visible,.gc button:focus-visible,.gc input:focus-visible{outline:2px solid #c9a8ff;outline-offset:2px}
+    .gc-body{padding:2px 12px 12px;display:grid;gap:10px}
+    .gc.is-collapsed .gc-body{display:none}
+    .gc-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px}
+    .gc-row.wide{grid-template-columns:1fr}
+    .gc-row.wide .gc-line{display:flex;justify-content:space-between}
+    .gc-val{opacity:.65;font-variant-numeric:tabular-nums}
+    .gc input[type=color]{width:38px;height:24px;padding:0;border:1px solid rgba(255,255,255,.25);border-radius:6px;background:none;cursor:pointer}
+    .gc input[type=range]{width:100%;accent-color:#b86bff}
+    .gc input[type=checkbox]{width:16px;height:16px;accent-color:#b86bff}
+    .gc-actions{display:flex;gap:8px}
+    .gc-actions button{flex:1;padding:7px 0;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+      background:rgba(255,255,255,.08);color:inherit;font:inherit;cursor:pointer}
+    .gc-actions button:hover{background:rgba(255,255,255,.18)}
+  `;
+  document.head.appendChild(style);
+
+  panel = document.createElement('div');
+  panel.className = 'gc';
+  panel.setAttribute('role', 'group');
+  panel.setAttribute('aria-label', 'Gradient controls');
+  panel.innerHTML = `
+    <div class="gc-head">
+      <span class="gc-title">Gradient</span>
+      <button class="gc-toggle" type="button" aria-label="Collapse controls" aria-expanded="true">&#8211;</button>
+    </div>
+    <div class="gc-body">
+      <label class="gc-row"><span>Center color</span><input type="color" data-k="c1"></label>
+      <label class="gc-row wide"><span class="gc-line"><span>Center opacity</span><span class="gc-val" data-v="a"></span></span>
+        <input type="range" min="0" max="1" step="0.01" data-k="a"></label>
+      <label class="gc-row"><span>Edge color</span><input type="color" data-k="c2"></label>
+      <label class="gc-row wide"><span class="gc-line"><span>Spread</span><span class="gc-val" data-v="stop"></span></span>
+        <input type="range" min="5" max="100" step="1" data-k="stop"></label>
+      <label class="gc-row"><span>Follow cursor</span><input type="checkbox" data-k="follow"></label>
+      <div class="gc-actions">
+        <button type="button" data-act="copy">Copy CSS</button>
+        <button type="button" data-act="reset">Reset</button>
+      </div>
+    </div>`;
+  document.body.appendChild(panel);
+
+  const inputs = [...panel.querySelectorAll('[data-k]')];
+  const fmt = { a: v => (+v).toFixed(2), stop: v => v + '%' };
+
+  const sync = () => inputs.forEach(el => {
+    const k = el.dataset.k;
+    if (el.type === 'checkbox') el.checked = s[k]; else el.value = s[k];
+    const out = panel.querySelector(`[data-v="${k}"]`);
+    if (out) out.textContent = fmt[k](s[k]);
+  });
+  sync();
+
+  panel.addEventListener('input', e => {
+    const el = e.target.closest('[data-k]');
+    if (!el) return;
+    const k = el.dataset.k;
+    s[k] = el.type === 'checkbox' ? el.checked : (el.type === 'range' ? +el.value : el.value);
+    const out = panel.querySelector(`[data-v="${k}"]`);
+    if (out) out.textContent = fmt[k](s[k]);
+    paint();
+  });
+
+  panel.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    if (btn.dataset.act === 'reset') { Object.assign(s, DEFAULTS); sync(); paint(); return; }
+    const text = `background-image: ${css()};`;
+    try { await navigator.clipboard.writeText(text); }
+    catch { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+    btn.textContent = 'Copied';
+    setTimeout(() => (btn.textContent = 'Copy CSS'), 1200);
+  });
+
+  // collapse
+  const toggle = panel.querySelector('.gc-toggle');
+  toggle.addEventListener('click', () => {
+    const c = panel.classList.toggle('is-collapsed');
+    toggle.setAttribute('aria-expanded', String(!c));
+    toggle.setAttribute('aria-label', c ? 'Expand controls' : 'Collapse controls');
+    toggle.innerHTML = c ? '+' : '&#8211;';
+  });
+
+  // drag by the header
+  const head = panel.querySelector('.gc-head');
+  let drag = null;
+  head.addEventListener('pointerdown', e => {
+    if (e.target.closest('.gc-toggle')) return;
+    const r = panel.getBoundingClientRect();
+    drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    panel.style.left = r.left + 'px'; panel.style.top = r.top + 'px';
+    panel.style.right = 'auto'; panel.style.bottom = 'auto';
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const x = Math.min(innerWidth - panel.offsetWidth, Math.max(0, e.clientX - drag.dx));
+    const y = Math.min(innerHeight - head.offsetHeight, Math.max(0, e.clientY - drag.dy));
+    panel.style.left = x + 'px'; panel.style.top = y + 'px';
+  });
+  head.addEventListener('pointerup', () => { drag = null; });
+})();
+</script>
+<!-- ===================== (copy to here) ===================== -->
+
+</body>
+</html>
