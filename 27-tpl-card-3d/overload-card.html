@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overload Card</title>
+<style>
+:root{
+  --card-height:340px;
+  --card-width:calc(var(--card-height)/1.5);
+  --accent:#ff6a1a;
+}
+*{box-sizing:border-box}
+body{
+  min-height:100vh;margin:0;display:flex;flex-wrap:wrap;gap:60px;
+  justify-content:center;align-items:center;padding:40px;
+  background:#0b0d12;
+}
+.card{
+  width:var(--card-width);height:var(--card-height);position:relative;
+  display:flex;justify-content:center;align-items:flex-end;
+  padding:0 30px 26px;perspective:2500px;text-decoration:none;
+}
+.card.alt{--accent:#19d3ff}
+.wrapper{
+  position:absolute;inset:0;z-index:-1;overflow:hidden;
+  transition:all .5s;
+}
+.cover-image{width:100%;height:100%;object-fit:cover;object-position:center;transition:filter .5s}
+.card.alt .cover-image{filter:hue-rotate(-20deg)}
+.wrapper::before,.wrapper::after{
+  content:"";position:absolute;left:0;width:100%;transition:all .5s;
+}
+.wrapper::before{
+  top:0;height:100%;opacity:0;
+  background:linear-gradient(to top,transparent 46%,rgba(11,13,18,.5) 68%,#0b0d12 97%);
+}
+.wrapper::after{
+  bottom:0;height:90px;opacity:1;
+  background:linear-gradient(to bottom,transparent 0%,rgba(11,13,18,.6) 60%,#0b0d12 100%);
+}
+.card:hover .wrapper,.card:focus-visible .wrapper{
+  transform:perspective(900px) translateY(-5%) rotateX(25deg);
+  box-shadow:0 35px 32px -8px rgba(0,0,0,.8),0 0 40px -10px var(--accent);
+}
+.card:hover .wrapper::before,.card:focus-visible .wrapper::before{opacity:1}
+.card:hover .wrapper::after,.card:focus-visible .wrapper::after{height:130px}
+
+.title{
+  position:relative;margin:0;width:100%;text-align:center;
+  font:900 34px/1 "Impact","Arial Black",sans-serif;letter-spacing:.06em;
+  color:#fff;text-shadow:0 0 14px var(--accent),0 2px 0 rgba(0,0,0,.6);
+  transition:transform .5s;
+}
+.card:hover .title,.card:focus-visible .title{transform:translate3d(0,-50px,100px)}
+
+.character{
+  position:absolute;bottom:0;width:150%;max-width:none;left:50%;
+  margin-left:-75%;z-index:-1;opacity:0;pointer-events:none;
+  transition:all .5s;
+  filter:drop-shadow(0 0 18px var(--accent));
+}
+.card.alt .character{filter:hue-rotate(160deg) drop-shadow(0 0 18px var(--accent))}
+.card:hover .character,.card:focus-visible .character{
+  opacity:1;transform:translate3d(0,-26%,100px);
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<a href="#" class="card">
+  <div class="wrapper"><img src="assets/images/about/about.jpeg" class="cover-image" alt=""></div>
+  <h2 class="title">OVERLOAD</h2>
+  <img src="assets/images/about/cybord.png" class="character" alt="">
+</a>
+
+
+</body>
+</html>

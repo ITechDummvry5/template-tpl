@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dumont — photography portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#111;font-family:'Archivo','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  body{overscroll-behavior:none;touch-action:none}
+
+  .stage{position:fixed;inset:0;--s:6} /* --s = how far the middle line tilts, in % of screen height (set by SEAM_TILT) */
+  .col{position:absolute;left:0;width:100%;height:calc((50 + var(--s)) * 1vh);overflow:hidden;background:#ddd}
+  /* top half: flat top, slanted bottom edge */
+  #colL{top:0;clip-path:polygon(0 0,100% 0,100% calc((50 - var(--s)) / (50 + var(--s)) * 100%),0 100%)}
+  /* bottom half: slanted top edge, flat bottom */
+  #colR{top:calc((50 - var(--s)) * 1vh);clip-path:polygon(0 calc(2 * var(--s) / (50 + var(--s)) * 100%),100% 0,100% 100%,0 100%)}
+  .col img,.col .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;visibility:hidden;user-select:none;-webkit-user-drag:none}
+  .col .ph{display:flex;align-items:center;justify-content:center;font-size:12vw;font-weight:500;color:rgba(255,255,255,.55)}
+
+  /* text sits on top, inverts against whatever photo is behind it */
+  .ui{position:fixed;inset:0;z-index:10;pointer-events:none;color:#fff;mix-blend-mode:difference;font-size:12px;line-height:14px;font-weight:500;letter-spacing:.01em}
+  .ui a,.ui button{pointer-events:auto}
+  .menu-btn{position:absolute;top:18px;left:15px;background:none;border:0;color:inherit;font:inherit;cursor:pointer}
+  .titles{position:absolute;left:15px;top:50%;transform:translateY(-50%)}
+  .titles span{display:block}
+  .year{position:absolute;left:50%;top:25%;transform:translate(-50%,-50%);font-size:11px}
+  .foot{position:absolute;left:15px;bottom:14px}
+
+  /* menu overlay */
+  .overlay{position:fixed;inset:0;z-index:20;background:#0c0c0c;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 15px;
+    clip-path:inset(0 0 100% 0);transition:clip-path .7s cubic-bezier(.77,0,.18,1)}
+  .overlay.open{clip-path:inset(0 0 0 0)}
+  .overlay .close{position:absolute;top:18px;left:15px;background:none;border:0;color:#fff;font:500 12px 'Archivo',sans-serif;cursor:pointer}
+  .overlay ol{list-style:none}
+  .overlay li button{background:none;border:0;color:#fff;font:400 clamp(28px,5vw,64px)/1.1 'Archivo',sans-serif;letter-spacing:-.02em;cursor:pointer;opacity:.45;transition:opacity .25s;text-align:left}
+  .overlay li button:hover{opacity:1}
+  .overlay small{font-size:12px;margin-left:10px;vertical-align:top}
+
+</style>
+</head>
+<body>
+
+<main class="stage" id="stage">
+  <div class="col" id="colL"></div>
+  <div class="col" id="colR"></div>
+</main>
+
+<div class="ui">
+  <button class="menu-btn" id="menuBtn">Menu</button>
+  <div class="titles"><span id="tL"></span><span id="tR"></span></div>
+  <div class="year" id="year"></div>
+  <div class="foot">Dumont<br>Copyright © <span id="yy">26</span></div>
+</div>
+
+<nav class="overlay" id="overlay">
+  <button class="close" id="closeBtn">Close</button>
+  <ol id="menuList"></ol>
+</nav>
+
+<script>
+/* ============================================================
+   EDIT HERE — put your photos in an  images/  folder next to
+   this index.html and list them below.
+   Each project: file name, title, year.
+   (Missing files show a grey placeholder so the page still works.)
+   Use at least 3 projects.
+   ============================================================ */
+const IMAGE_PATH = "images/";
+
+const PROJECTS = [
+  { file: "1.jpg", title: "Salt House",         year: 24 },
+  { file: "2.jpg", title: "Terra House",        year: 24 },
+  { file: "3.jpg", title: "Surface Room",       year: 26 },
+  { file: "4.jpg", title: "Halo Cosmetics",     year: 26 },
+  { file: "5.jpg", title: "Lina Kirillova",     year: 25 },
+  { file: "6.jpg", title: "Night Conservatory", year: 25 },
+  { file: "7.jpg", title: "Handmade Weather",   year: 25 },
+  { file: "8.jpg", title: "Hearth Journal",     year: 25 }
+];
+/* ============================================================ */
+
+const N = PROJECTS.length;
+const mod = (a, n) => ((a % n) + n) % n;
+
+const colL = document.getElementById('colL');
+const colR = document.getElementById('colR');
+
+/* Left column shows projects 0..N-1 in order,
+   right column shows them in reverse so the pair is always different. */
+const orderL = PROJECTS.map((_, i) => i);
+const orderR = PROJECTS.map((_, i) => N - 1 - i);
+
+function buildCol(col, order){
+  const arr = [];
+  order.forEach(pi => {
+    const p = PROJECTS[pi];
+    const img = new Image();
+    img.alt = p.title;
+    img.draggable = false;
+    img.src = IMAGE_PATH + p.file;
+    img.onerror = () => {
+      const ph = document.createElement('div');
+      ph.className = 'ph';
+      ph.textContent = String(pi + 1).padStart(2, '0');
+      ph.style.background = `hsl(${(pi * 47) % 360} 18% ${28 + (pi % 3) * 8}%)`;
+      img.replaceWith(ph);
+      arr[arr.indexOf(img)] = ph;
+      render();
+    };
+    col.appendChild(img);
+    arr.push(img);
+  });
+  return arr;
+}
+let elsL, elsR;
+elsL = buildCol(colL, orderL);
+elsR = buildCol(colR, orderR);
+
+
+/* Tilt of the MIDDLE LINE between the two halves, in % of screen height.
+   0 = flat, 4–8 = slight tilt, 15 = strong. */
+const SEAM_TILT = 6;
+document.getElementById('stage').style.setProperty('--s', SEAM_TILT);
+
+/* Angle of the wipe edge while scrolling (separate from the middle line). 0 = straight. */
+const TILT = 0;
+
+function wipe(c, f){
+  const t = TILT, X = -t + f * (100 + 2 * t);
+  const p = (x, y) => `${x.toFixed(2)}% ${y}%`;
+  if (c === 0) return `polygon(${p(0,0)}, ${p(X+t,0)}, ${p(X-t,100)}, ${p(0,100)})`;
+  return `polygon(${p(100,0)}, ${p(100-X-t,0)}, ${p(100-X+t,100)}, ${p(100,100)})`;
+}
+
+/* ---------- state ---------- */
+let target = 0;   // where we want to be (in panels, can be fractional / infinite)
+let pos = 0;      // current animated position
+let snapTimer;
+
+function render(){
+  const base = Math.floor(pos);
+  const f = pos - base;
+  const i0 = mod(base, N), i1 = mod(base + 1, N);
+  
+  [elsL, elsR].forEach((arr, c) => {
+    arr.forEach(el => { el.style.visibility = 'hidden'; el.style.clipPath = 'none'; el.style.zIndex = 0; });
+    const a = arr[i0], b = arr[i1];
+    a.style.visibility = 'visible'; a.style.zIndex = 1;
+    if (f > 0.0005){
+      b.style.visibility = 'visible'; b.style.zIndex = 2;
+      const rest = ((1 - f) * 100).toFixed(3) + '%';
+      b.style.clipPath = wipe(c, f);
+    }
+  });
+
+  const idx = mod(Math.round(pos), N);
+  const l = PROJECTS[orderL[idx]], r = PROJECTS[orderR[idx]];
+  document.getElementById('tL').textContent = l.title;
+  document.getElementById('tR').textContent = r.title;
+  document.getElementById('year').textContent = l.year;
+}
+
+/* ---------- animation loop ---------- */
+function tick(){
+  const d = target - pos;
+  if (Math.abs(d) > 0.0002){ pos += d * 0.09; render(); }
+  else if (pos !== target){ pos = target; render(); }
+  requestAnimationFrame(tick);
+}
+
+function scheduleSnap(){
+  clearTimeout(snapTimer);
+  snapTimer = setTimeout(() => { target = Math.round(target); }, 140);
+}
+
+function nudge(amount){
+  target += amount;
+  scheduleSnap();
+}
+
+/* wheel */
+window.addEventListener('wheel', e => {
+  if (overlay.classList.contains('open')) return;
+  e.preventDefault();
+  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+  nudge(d / (window.innerWidth * 0.9));
+}, { passive: false });
+
+/* touch drag */
+let tx = null;
+window.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+window.addEventListener('touchmove', e => {
+  if (tx === null || overlay.classList.contains('open')) return;
+  const x = e.touches[0].clientX;
+  nudge((tx - x) / (window.innerWidth * 0.8));
+  tx = x;
+}, { passive: true });
+window.addEventListener('touchend', () => { tx = null; scheduleSnap(); });
+
+/* keyboard */
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); target = Math.round(target) + 1; }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); target = Math.round(target) - 1; }
+  if (e.key === 'Escape') closeMenu();
+});
+
+/* ---------- menu ---------- */
+const overlay = document.getElementById('overlay');
+const list = document.getElementById('menuList');
+PROJECTS.forEach((p, i) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<button data-i="${i}">${p.title}<small>${String(p.year).padStart(2,'0')}</small></button>`;
+  list.appendChild(li);
+});
+list.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const i = +b.dataset.i;
+  // jump to the nearest position for that project in the top row
+  const cur = Math.round(target);
+  target = cur + mod(i - cur, N) - (mod(i - cur, N) > N / 2 ? N : 0);
+  closeMenu();
+});
+function closeMenu(){ overlay.classList.remove('open'); }
+document.getElementById('menuBtn').onclick = () => overlay.classList.add('open');
+document.getElementById('closeBtn').onclick = closeMenu;
+
+document.getElementById('yy').textContent = String(new Date().getFullYear()).slice(-2);
+
+render();
+tick();
+</script>
+</body>
+</html>

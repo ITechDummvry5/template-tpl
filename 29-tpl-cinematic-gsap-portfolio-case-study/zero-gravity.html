@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero Gravity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400&family=Newsreader:opsz,wght@6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff; --ink:#111; --muted:#6b6b6b; --chip:#161616;
+    --pad:clamp(16px,3vw,40px);
+    --sans:"Space Grotesk",system-ui,sans-serif;
+    --serif:"Newsreader",Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html.lenis{height:auto}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);overflow-x:hidden}
+
+  /* HERO */
+  .hero{position:relative;height:100vh;height:100svh;overflow:hidden;background:#fff}
+  .hero-media{position:absolute;inset:0;overflow:hidden;
+    clip-path:inset(0 0 0 0 round 0);will-change:clip-path}
+  .hero-media img{position:absolute;left:0;top:-10%;width:100%;height:120%;object-fit:cover;will-change:transform}
+  .logo{position:absolute;top:var(--pad);left:var(--pad);font-size:.8rem;z-index:3}
+  .title{position:absolute;top:calc(var(--pad)*1.4);left:0;z-index:2;
+    font-weight:300;font-size:clamp(4rem,12vw,11rem);line-height:.92;letter-spacing:-.03em;will-change:transform}
+  .title span{display:block;overflow:hidden;padding-bottom:.06em}
+  .title .l1{padding-left:clamp(90px,17vw,300px)}
+  .title .l2{padding-left:var(--pad)}
+  .chip{position:absolute;left:min(34vw,520px);top:58%;z-index:3;
+    background:var(--chip);color:#fff;border-radius:14px;padding:12px 18px;
+    font-size:.72rem;line-height:1.35;min-width:120px}
+
+  /* INFO */
+  .info{position:relative;background:var(--bg);padding:clamp(48px,9vw,120px) var(--pad);
+    display:grid;grid-template-columns:1.2fr 1fr .7fr;gap:var(--pad)}
+  .info h4{font-size:.7rem;font-weight:400;color:var(--muted);margin-bottom:14px}
+  .info p{font-family:var(--serif);font-size:.82rem;line-height:1.55;color:var(--muted);max-width:44ch}
+  .info p+p{margin-top:1.1em}
+  .roles li{list-style:none;font-size:clamp(1.1rem,1.8vw,1.7rem);line-height:1.15;font-weight:300}
+  .roles li::before{content:"> ";color:var(--muted)}
+  .meta{font-size:.72rem;line-height:1.6}
+
+  /* MOCKUP */
+  .mockup{padding:6vw var(--pad) 12vw;display:flex;justify-content:center}
+  .mockup-frame{width:min(70vw,720px);aspect-ratio:4/3;overflow:hidden;
+    clip-path:inset(0 round 0);will-change:transform,clip-path}
+  .mockup-frame img{width:100%;height:100%;object-fit:cover;display:block}
+
+  @media (max-width:760px){
+    .info{grid-template-columns:1fr}
+    .chip{left:var(--pad);top:62%}
+    .mockup-frame{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero" id="hero">
+  <div class="hero-media"><img id="heroImg" alt=""></div>
+  <div class="logo">tokyo_WORK ©</div>
+  <h1 class="title" id="title">
+    <span class="l1">Zero</span>
+    <span class="l2">Gravity</span>
+  </h1>
+  <div class="chip">Nike /<br>Augmented Reality</div>
+</header>
+
+<section class="info">
+  <div>
+    <h4>Description /</h4>
+    <p>Write your project description here. Explain the idea, the tools you used and what the result lets people do.</p>
+    <p>Note - add a short disclaimer or credit line here.</p>
+  </div>
+  <div>
+    <h4>Role /</h4>
+    <ul class="roles">
+      <li>Concept</li><li>Art direction</li><li>UI/UX design</li><li>Motion design</li><li>3D design</li>
+    </ul>
+  </div>
+  <div class="meta">
+    <h4>Info /</h4>
+    Client / Nike<br>Agency / Your studio<br>Year / 2026
+  </div>
+</section>
+
+<section class="mockup">
+  <div class="mockup-frame" id="mockFrame"><img id="mockImg" alt=""></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+  /* ===== EDIT THESE TWO PATHS ===== */
+  const HERO_IMAGE   = "images/1.jpg";
+  const MOCKUP_IMAGE = "images/2.jpg";
+  /* ================================= */
+
+  document.getElementById("heroImg").src = HERO_IMAGE;
+  document.getElementById("mockImg").src = MOCKUP_IMAGE;
+
+  gsap.registerPlugin(ScrollTrigger);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if(!reduce){
+    // smooth scroll, driven by GSAP's ticker
+    const lenis = new Lenis({ lerp: 0.1 });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // 1. hero image shrinks into a card with rounded bottom corners
+    gsap.to(".hero-media", {
+      clipPath: "inset(0px 3vw 0px 3vw round 0px 0px 56px 56px)",
+      ease: "none",
+      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    });
+
+    // 2. image moves slower than its frame (inner parallax)
+    gsap.to("#heroImg", {
+      yPercent: 12, ease: "none",
+      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    });
+
+    // 3. title leaves faster than the page scrolls
+    gsap.to("#title", {
+      yPercent: -70, ease: "none",
+      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    });
+
+    // 4. mockup scales up and rounds as it enters
+    gsap.fromTo("#mockFrame",
+      { scale: .7, clipPath: "inset(0 round 0px)" },
+      { scale: 1, clipPath: "inset(0 round 28px)", ease: "none",
+        scrollTrigger: { trigger: ".mockup", start: "top 90%", end: "top 30%", scrub: true } });
+  }
+</script>
+</body>
+</html>
