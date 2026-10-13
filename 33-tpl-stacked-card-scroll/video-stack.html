@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Featured Work Videos</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;800&family=Mulish:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+
+:root{--bg:#1b1b1b;--card:#212121;--text:#fff;--mute:#8a8a8a;--acc:#e8541a;--acc-rgb:232,84,26;
+--paper-rgb:241,237,228;--ink-rgb:14,12,10;--hf:'Lexend','Segoe UI',system-ui,sans-serif;--bf:'Mulish','Segoe UI',system-ui,sans-serif;
+--fw-extrabold:800;--tr-fast:.2s ease;--tr-normal:.3s cubic-bezier(.2,.7,.2,1);box-sizing:border-box}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.7 var(--bf);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.v{position:relative;aspect-ratio:1/.98;border-radius:6px;overflow:hidden}
+.v img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vi span{display:block;padding:0 16px;color:var(--mute);font-weight:800;font-size:11px;text-transform:uppercase}
+.vg{display:grid}
+
+/* ===== videos: stacked cards that slide up over each other (scroll-driven) ===== */
+.vsec {
+  position: relative;
+  padding: 0;
+}
+
+/* ---- default / no-JS / reduced motion / short screens ---- */
+.vsec .vview { padding: 0; max-width: none; margin: 0; }
+.vsec .vg { display: flex; flex-direction: column; grid-template-columns: none; gap: 0; width: auto; }
+
+.vsec .vi {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  overflow: hidden;
+  padding: 20px clamp(20px, 5vw, 80px) 24px;
+  background: var(--pc, var(--card));
+}
+
+.vsec .vi h3 {
+  order: 1;
+  margin: 0 0 -.3em;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+  font: var(--fw-extrabold) clamp(34px, 8vw, 92px)/1 var(--hf);
+  letter-spacing: -.01em;
+}
+
+.vsec .vi .v { order: 2; aspect-ratio: 16 / 10; border-radius: 6px; }
+.vsec .vi > span { order: 0; padding: 0; margin-bottom: 10px; color: var(--acc); }
+
+/* background colors repeat every 6 cards */
+.vsec .vi:nth-child(6n+1) { --pc: #2a1650; }
+.vsec .vi:nth-child(6n+2) { --pc: #17140f; }
+.vsec .vi:nth-child(6n+3) { --pc: #3a1230; }
+.vsec .vi:nth-child(6n+4) { --pc: #1b2733; }
+.vsec .vi:nth-child(6n+5) { --pc: #3a2a12; }
+.vsec .vi:nth-child(6n+6) { --pc: #062c30; }
+
+/* vertical parallax inside the image box */
+.vsec .v {
+  background-size: 100% 128% !important;
+  background-position: 50% calc(50% + var(--py, 0) * 50%) !important;
+  overflow: hidden;
+}
+
+.vsec .v img {
+  transform: translate3d(0, calc(var(--py, 0) * 7%), 0) scale(1.16);
+}
+
+/* ---- pinned mode ---- */
+.vsec.is-pinned { margin-top: 0; }
+.vsec.is-pinned .vstage { pointer-events: none; position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; box-sizing: border-box; padding-top: 0; padding-bottom: 0; display: flex; flex-direction: column; }
+.vsec.is-pinned .vview { position: relative; flex: 1; min-height: 0; width: 100%; overflow: hidden; border-radius: 0; }
+.vsec.is-pinned .vg { position: absolute; inset: 0; display: block; }
+.vsec.is-pinned .vi { position: absolute; inset: 0; border-radius: 0; padding: clamp(14px, 2.4vw, 28px) clamp(20px, 5vw, 80px); will-change: transform, filter; transform-origin: 50% 0; }
+.vsec.is-pinned .vi .v { flex: 1; min-height: 0; aspect-ratio: auto; width: 100%; max-width: none; align-self: center; }
+.vsec.is-pinned .vi > span { position: absolute; right: clamp(20px, 5vw, 80px); top: clamp(14px, 2.4vw, 28px); margin: 0; z-index: 3; }
+
+/* ---- real video inside card ---- */
+.vsec .v[data-video], .vsec .v[data-embed] { cursor: pointer; }
+/* FIX 1: every card takes clicks in pinned mode, so a click can never fall through to a hidden card */
+.vsec.is-pinned .v { pointer-events: auto; }
+.vsec .v video, .vsec .v iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; background: #000; z-index: 3; }
+.vsec .v.playing::after { display: none; }
+
+/* ---- play button ---- */
+.vsec .v::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 88px;
+  height: 88px;
+  border: 1.5px solid rgba(var(--paper-rgb), .85);
+  border-radius: 50%;
+  background: rgba(var(--ink-rgb), .45) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f1ede4' d='M8 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 8 5.2z'/%3E%3C/svg%3E") 54% 50%/34% no-repeat;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transform: none;
+  transition: transform var(--tr-normal), background-color var(--tr-normal), border-color var(--tr-normal);
+  pointer-events: none;
+}
+
+.vsec .v:hover::after {
+  transform: scale(1.1);
+  background-color: var(--acc);
+  border-color: var(--acc);
+}
+
+/* FIX 2: no play button on cards that have no video */
+.vsec .v:not([data-video]):not([data-embed])::after { display: none; }
+
+@media(max-width: 860px) { .vsec .v::after { width: 64px; height: 64px; } }
+
+/* dim the project thumbnails a little (brighten slightly on hover) */
+.vsec .v img { filter: brightness(.8); transition: filter var(--tr-normal); }
+.vsec .v:hover img { filter: brightness(.95); }
+
+/* project links in the label span: the pinned stage has pointer-events:none, so turn it back on for the link */
+.vsec .vi > span,
+.vsec .vi > span a { pointer-events: auto; }
+.vsec .vi > span a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color var(--tr-fast);
+}
+.vsec .vi > span a:hover,
+.vsec .vi > span a:focus-visible { color: #fff; }
+
+</style>
+</head>
+<body>
+<section class="vsec">
+  <div class="vstage">
+    <div class="vview">
+      <div class="vg">
+
+        <!-- CARD 1: Scheduler -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/scheduler.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#1a1240,#6a3aa0 60%,#c4781c)">
+            <img src="assets/images/video/video-1.jpg" alt="Scheduler preview" data-optional>
+          </div>
+          <h3>Scheduler</h3>
+        </div>
+
+        <!-- CARD 2: PromptKit -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/promptkit.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#0c0c0c,#1d1d1d 60%,#3a3320)">
+            <img src="assets/images/video/video-2.jpg" alt="PromptKit preview" data-optional>
+          </div>
+          <h3>PromptKit</h3>
+        </div>
+
+        <!-- CARD 3: MangaVault -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/mangavault.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#1a0a2a,#8a2a6a 55%,#e8841a)">
+            <img src="assets/images/video/video-3.jpg" alt="MangaVault preview" data-optional>
+          </div>
+          <h3>MangaVault</h3>
+        </div>
+
+        <!-- CARD 4: AcadLink -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/acadlink.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#2c3a4a,#4a5a6c 60%,#b3801c)">
+            <img src="assets/images/video/video-4.jpg" alt="AcadLink preview" data-optional>
+          </div>
+          <h3>AcadLink</h3>
+        </div>
+
+        <!-- CARD 5: Free Resume -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/free-resume.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#9a5a1c,#b8b0a0 55%,#5a5a40)">
+            <img src="assets/images/video/video-5.jpg" alt="Free Resume preview" data-optional>
+          </div>
+          <h3>Free Resume</h3>
+        </div>
+
+        <!-- CARD 6: Sidebar Note -->
+        <!-- VIDEO OPTIONS (add ONE inside the <div class="v"> tag below):
+             Local file:  data-video="assets/videos/sidebar-note.mp4"
+             YouTube:     data-embed="https://www.youtube.com/embed/VIDEO_ID"  -->
+        <div class="vi">
+          <div class="v" style="background:linear-gradient(160deg,#04343c,#0a5a60 55%,#8a1414)">
+            <img src="assets/images/video/video-6.jpg" alt="Sidebar Note preview" data-optional>
+          </div>
+          <h3>Sidebar Note</h3>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+/* Featured Work Videos Section:
+   1. Stacked card vertical scroll animation (scroll drives card stack).
+   2. Interactive video player (click thumbnail to load HTML5 video or YouTube iframe embed). */
+
+/* Part 1: Stacked Card Scroll Animation */
+(function(){
+  const sec=document.querySelector('.vsec');if(!sec)return;
+  const stage=sec.querySelector('.vstage'),vg=sec.querySelector('.vg');
+  const cards=[...vg.children],N=cards.length,rm=matchMedia('(prefers-reduced-motion: reduce)');
+  const STEP=.85,clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  let sm=0,shown=-1,last=performance.now(),pinned=false;
+
+  function progress(){
+    const span=sec.offsetHeight-stage.offsetHeight;
+    return span>0?clamp(-sec.getBoundingClientRect().top/span,0,1):0;
+  }
+
+  function reset(){
+    sec.style.height='';
+    cards.forEach(c=>{c.style.transform='';c.style.filter='';c.style.zIndex='';c.style.removeProperty('--py')});
+  }
+
+  function draw(){
+    const t=sm*(N-1);
+    cards.forEach((c,i)=>{
+      const enter=i===0?1:ease(clamp(t-(i-1),0,1));
+      const cover=clamp(t-i,0,1);
+      const y=(1-enter)*105-cover*5, s=1-.05*cover;
+      c.style.zIndex=i+1;
+      c.style.transform='translate3d(0,'+y.toFixed(2)+'%,0) scale('+s.toFixed(4)+')';
+      c.style.filter='brightness('+(1-.55*cover).toFixed(3)+')';
+      c.style.setProperty('--py',(cover>0?-cover:(1-enter)).toFixed(3));
+    });
+    shown=sm;
+  }
+
+  function measure(){
+    const want=!rm.matches&&innerHeight>=520&&N>1;
+    if(want!==pinned){pinned=want;sec.classList.toggle('is-pinned',want);if(!want)reset()}
+    if(!pinned)return;
+    sec.style.height=(stage.offsetHeight*(1+(N-1)*STEP))+'px';
+    sm=progress();draw();
+  }
+
+  (function loop(now){
+    requestAnimationFrame(loop);
+    if(!pinned)return;
+    const r=sec.getBoundingClientRect();
+    if(r.bottom<0||r.top>innerHeight){last=now;return}
+    const dt=Math.min((now-last)/1000,.05);last=now;
+    sm+=(progress()-sm)*(1-Math.exp(-dt*9));
+    if(Math.abs(sm-shown)>.00005)draw();
+  })(last);
+
+  addEventListener('resize',measure);
+  addEventListener('orientationchange',measure);
+  addEventListener('load',measure);
+  if(rm.addEventListener)rm.addEventListener('change',measure);
+  measure();
+})();
+
+/* Part 2: Interactive Video Player (Click thumbnail -> HTML5 Video / YouTube Embed) */
+(function(){
+  const boxes=document.querySelectorAll('.vsec .v[data-video],.vsec .v[data-embed]');
+  function play(box){
+    if(box.classList.contains('playing'))return;
+    let el;
+    if(box.dataset.video){
+      el=document.createElement('video');
+      el.src=box.dataset.video;
+      el.controls=true;el.autoplay=true;el.playsInline=true;
+      const img=box.querySelector('img');if(img&&img.src)el.poster=img.src;
+    }else{
+      el=document.createElement('iframe');
+      const u=box.dataset.embed;
+      el.src=u+(u.indexOf('?')>-1?'&':'?')+'autoplay=1';
+      el.allow='autoplay; fullscreen; picture-in-picture';
+      el.allowFullscreen=true;
+    }
+    box.appendChild(el);
+    box.classList.add('playing');
+  }
+  function stop(box){
+    const v=box.querySelector('video,iframe');
+    if(!v)return;
+    v.remove();box.classList.remove('playing');
+  }
+  boxes.forEach(function(b){
+    b.setAttribute('role','button');b.tabIndex=0;b.setAttribute('aria-label','Play video');
+    b.addEventListener('click',function(e){if(!b.classList.contains('playing'))play(b)});
+    b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();play(b)}});
+  });
+
+  /* Stop a video when its card leaves the screen */
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(!e.isIntersecting)stop(e.target)});
+    },{threshold:0.15});
+    boxes.forEach(function(b){io.observe(b)});
+  }
+
+  /* Stop a video when the next stacked card slides over it
+     (the card is still "on screen", but no longer the topmost thing) */
+  let ticking=false;
+  function checkCovered(){
+    ticking=false;
+    boxes.forEach(function(b){
+      if(!b.classList.contains('playing'))return;
+      const r=b.getBoundingClientRect();
+      const el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+      if(!el||!b.contains(el))stop(b);
+    });
+  }
+  addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;requestAnimationFrame(checkCovered);
+  },{passive:true});
+})();
+
+</script>
+</body>
+</html>
