@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Northwind Sales (dummy data)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0c0c0d;--panel:#141416;--panel2:#1a1a1d;--ink:#f1efea;--mute:#7d7d84;--gray:#3b3b41;--accent:#f2a43a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit;margin:0;padding:0}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans","Helvetica Neue",Arial,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+.d{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif}
+main{max-width:1240px;margin:0 auto;padding:28px 32px 96px}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.tabs{display:flex;gap:4px;background:var(--panel);padding:4px;border-radius:999px}
+.tabs button{background:none;border:0;color:var(--mute);font:500 13px "DM Sans",sans-serif;padding:8px 16px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end;margin-top:88px}
+.big{font-size:clamp(72px,13vw,176px);font-weight:800;letter-spacing:-.05em;line-height:.9}
+.big small{font-size:.32em;color:var(--accent);letter-spacing:-.02em;margin-left:.2em;font-weight:600}
+.lede{font-size:22px;line-height:1.3;color:var(--ink);max-width:380px}
+.lede span{color:var(--mute)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:72px}
+.kpi .l{color:var(--mute);font-size:14px}
+.kpi .n{font-size:44px;font-weight:600;letter-spacing:-.03em;margin-top:6px}
+.kpi .c{font-size:13px;color:var(--mute);margin-top:2px}
+.kpi svg{width:100%;height:36px;margin-top:14px;display:block}
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:80px}
+.p{background:var(--panel);border-radius:20px;padding:32px}
+.s8{grid-column:span 8}.s4{grid-column:span 4}.s5{grid-column:span 5}.s7{grid-column:span 7}
+h2{font-size:20px;font-weight:600;letter-spacing:-.02em}
+.note{color:var(--mute);font-size:14px;margin-top:4px}
+.chart{position:relative;margin-top:28px}
+svg.c{width:100%;height:auto;display:block;overflow:visible}
+svg text{font-family:"DM Sans",sans-serif;font-size:12px;fill:var(--mute)}
+svg text.hl{fill:var(--accent);font-weight:500}
+svg text.ink{fill:var(--ink)}
+.tip{position:absolute;top:0;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-120%);opacity:0;transition:opacity .15s}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+th{color:var(--mute);font-weight:400;text-align:left;padding:0 0 12px}
+td{padding:14px 0;background:none}
+tr+tr td{box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+td:last-child,th:last-child{text-align:right}
+.st{color:var(--mute)}.st.ok{color:var(--ink)}.st.hot{color:var(--accent)}
+footer{color:var(--mute);font-size:13px;margin-top:48px}
+@media(max-width:900px){.hero{grid-template-columns:1fr;margin-top:56px}.kpis{grid-template-columns:1fr;gap:36px}.s8,.s4,.s5,.s7{grid-column:span 12}main{padding:20px 18px 64px}.p{padding:24px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="logo d">northwind</div>
+  <div class="tabs" role="tablist" aria-label="Period">
+    <button class="on" data-r="12">Year</button><button data-r="6">6 months</button><button data-r="3">Quarter</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <p class="note" style="margin-bottom:16px">Total revenue</p>
+    <div class="big d">$4.82M<small>+18%</small></div>
+  </div>
+  <p class="lede d">The West region is carrying the year. <span>It grew 34% while every other region stayed under 20%.</span></p>
+</section>
+
+<section class="kpis">
+  <div class="kpi"><div class="l">Orders</div><div class="n d">12,460</div><div class="c">+9% vs last year</div><svg id="s1" viewBox="0 0 200 36" preserveAspectRatio="none"></svg></div>
+  <div class="kpi"><div class="l">Average order</div><div class="n d">$387</div><div class="c">+8% vs last year</div><svg id="s2" viewBox="0 0 200 36" preserveAspectRatio="none"></svg></div>
+  <div class="kpi"><div class="l">Refund rate</div><div class="n d">3.4%</div><div class="c">0.2 pts lower than last year</div><svg id="s3" viewBox="0 0 200 36" preserveAspectRatio="none"></svg></div>
+</section>
+
+<section class="bento">
+  <div class="p s8">
+    <h2 class="d">Monthly revenue</h2><p class="note">Growth sped up after June.</p>
+    <div class="chart"><svg class="c" id="line" viewBox="0 0 700 280" role="img" aria-label="Monthly revenue"></svg><div class="tip" id="tip"></div></div>
+  </div>
+  <div class="p s4">
+    <h2 class="d">By region</h2><p class="note">Revenue this year.</p>
+    <div class="chart"><svg class="c" id="bars" viewBox="0 0 300 260" role="img" aria-label="Revenue by region"></svg></div>
+  </div>
+  <div class="p s5">
+    <h2 class="d">Top products</h2><p class="note">Share of total revenue.</p>
+    <div class="chart"><svg class="c" id="prod" viewBox="0 0 400 220" role="img" aria-label="Top products"></svg></div>
+  </div>
+  <div class="p s7">
+    <h2 class="d">Latest orders</h2><p class="note">Last five of 12,460.</p>
+    <table>
+      <thead><tr><th>Customer</th><th>Product</th><th>Status</th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Alder &amp; Finch</td><td>Pro plan</td><td class="st ok">Paid</td><td>$2,400</td></tr>
+        <tr><td>Maris Studio</td><td>Add-ons</td><td class="st ok">Paid</td><td>$640</td></tr>
+        <tr><td>Kestrel Labs</td><td>Training</td><td class="st">Pending</td><td>$1,180</td></tr>
+        <tr><td>Oakline Foods</td><td>Starter plan</td><td class="st ok">Paid</td><td>$390</td></tr>
+        <tr><td>Tidewater Co.</td><td>Pro plan</td><td class="st hot">Refunded</td><td>$2,400</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<footer>Dummy data for layout practice. Not real figures.</footer>
+</main>
+<script>
+const NS="http://www.w3.org/2000/svg",C=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(p,t,a,x){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;p.appendChild(e);return e}
+const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],V=[310,325,318,340,352,360,395,420,438,455,470,490];
+
+// sparklines (gray, last point accent)
+[["s1",[8,9,8,10,11,10,12,13,14,13,15,16]],["s2",[30,31,30,32,33,33,34,35,36,36,37,38]],["s3",[4.1,4,3.9,3.9,3.8,3.8,3.7,3.6,3.6,3.5,3.5,3.4]]].forEach(([id,d])=>{
+  const s=document.getElementById(id),mn=Math.min(...d),mx=Math.max(...d);
+  const pts=d.map((v,i)=>[i*200/11,32-(v-mn)/(mx-mn||1)*28]);
+  el(s,"polyline",{points:pts.map(p=>p.join(",")).join(" "),fill:"none",stroke:C("--gray"),"stroke-width":2,"vector-effect":"non-scaling-stroke"});
+});
+
+// line chart with range + hover
+const line=document.getElementById("line"),tip=document.getElementById("tip");
+function drawLine(n){
+  line.innerHTML="";
+  const v=V.slice(12-n),m=M.slice(12-n),W=640,H=220,mn=280,mx=500,
+  x=i=>8+i*(W-40)/(n-1),y=d=>H-(d-mn)/(mx-mn)*H,cut=Math.max(0,v.length-6-1);
+  const poly=(a,o)=>a.map((d,i)=>x(i+o)+","+y(d)).join(" ");
+  if(cut>0)el(line,"polyline",{points:poly(v.slice(0,cut+1),0),fill:"none",stroke:C("--gray"),"stroke-width":3,"stroke-linecap":"round","stroke-linejoin":"round"});
+  el(line,"polyline",{points:poly(v.slice(cut),cut),fill:"none",stroke:C("--accent"),"stroke-width":3,"stroke-linecap":"round","stroke-linejoin":"round"});
+  const last=v.length-1;
+  el(line,"circle",{cx:x(last),cy:y(v[last]),r:6,fill:C("--accent")});
+  el(line,"text",{x:x(last)+12,y:y(v[last])+4,class:"hl"},"$490K");
+  m.forEach((t,i)=>{if(n<=6||i%2==0||i==last)el(line,"text",{x:x(i),y:H+34,"text-anchor":"middle"},t)});
+  const dot=el(line,"circle",{r:5,fill:C("--ink"),opacity:0}),hit=el(line,"rect",{x:0,y:-10,width:700,height:H+30,fill:"transparent"});
+  hit.addEventListener("mousemove",e=>{
+    const r=line.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*700;
+    let i=Math.round((px-8)/((W-40)/(n-1)));i=Math.max(0,Math.min(last,i));
+    dot.setAttribute("cx",x(i));dot.setAttribute("cy",y(v[i]));dot.setAttribute("opacity",1);
+    tip.textContent=m[i]+"  $"+v[i]+"K";tip.style.left=(x(i)/700*r.width)+"px";tip.style.top=(y(v[i])/280*r.height)+"px";tip.style.opacity=1});
+  hit.addEventListener("mouseleave",()=>{dot.setAttribute("opacity",0);tip.style.opacity=0});
+}
+drawLine(12);
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");drawLine(+b.dataset.r)});
+
+// region bars
+(function(){const s=document.getElementById("bars");
+ [["West",1.62,1],["East",1.38],["South",1.04],["Central",.78]].forEach((r,i)=>{const y=i*64,w=r[1]/1.7*170;
+  el(s,"text",{x:0,y:y+14,class:r[2]?"ink":""},r[0]);
+  el(s,"rect",{x:0,y:y+24,width:w,height:18,rx:4,fill:r[2]?C("--accent"):C("--gray")});
+  el(s,"text",{x:w+10,y:y+38,class:r[2]?"hl":""},"$"+r[1].toFixed(2)+"M")})})();
+
+// products
+(function(){const s=document.getElementById("prod");
+ [["Pro plan",31],["Starter plan",24],["Add-ons",18],["Training",15],["Support",12]].forEach((r,i)=>{const y=i*44,w=r[1]/31*230;
+  el(s,"text",{x:0,y:y+17},r[0]);
+  el(s,"rect",{x:100,y:y+3,width:w,height:18,rx:4,fill:C("--gray")});
+  el(s,"text",{x:100+w+10,y:y+17},r[1]+"%")})})();
+</script>
+</body>
+</html>
